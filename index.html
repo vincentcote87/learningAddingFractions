@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script src="https://d3js.org/d3.v3.min.js"></script>
+    <meta charset="UTF-8">
+    <title>Fractions</title>
+    <style>
+        .divisionBox {
+            outline: solid #000000 3px;
+            fill: #ffffff;
+            opacity: 1.0;
+            z-index: -1;
+        }
+
+        .filledNum {
+            z-index: 99;
+        }
+
+        .fractionInput {
+            max-width: 30px;
+        }
+        hr {
+            max-width: 40px;
+            height: 3px;
+            background-color: #000000;
+        }
+        input {
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+<div style="margin: 50px;">
+    <div style="float: left; margin: 40px 20px 20px 16px;">
+        <div>
+            <input type="text" class="fractionInput" id="lOppNumerator">
+        </div>
+        <div>
+            <hr align="left">
+        </div>
+        <div>
+            <input type="text" class="fractionInput" id="lOppDenominator">
+        </div>
+        <div style="margin-top: 80px">
+            <input type="text" class="fractionInput" id="rOppNumerator">
+        </div>
+        <div>
+            <hr align="left">
+        </div>
+        <div>
+            <input type="text" class="fractionInput" id="rOppDenominator">
+        </div>
+    </div>
+
+    <svg width="850" height="420" id="mainCanvas" style="float: left">
+      <rect height="100" width="400" x="20" y="20" class="divisionBox"></rect>
+      <rect height="0" width="0" x="20" y="300" class="divisionBox" id="answerBox"></rect>
+        <rect height="100" width="400" x="20" y="20" class="divisionBox" id="lOpperandDivisonBox"></rect>
+        <rect height="100" width="0" x="20" y="20" class="filledNum" id="lOpperandDivisonBoxFilled"></rect>
+        <rect height="100" width="0" x="20" y="20" class="filledNum" id="lOpperandDivisonBoxAnswer"></rect>
+        <text x="0" y="148" color="black" font-size="30">+</text>
+        <rect height="100" width="400" x="20" y="160" class="divisionBox" id="rOpperandDivisonBox"></rect>
+        <rect height="100" width="0" x="20" y="160" class="filledNum" id="rOpperandDivisonBoxFilled"></rect>
+        <rect height="100" width="0" x="20" y="160" class="filledNum" id="rOpperandDivisonBoxAnswer"></rect>
+        <line x1="15" x2="425" y1="280" y2="280" stroke="black" stroke-width="3px"></line>
+
+    </svg>
+
+
+</div>
+
+<div style="clear: left;">
+    <button id="myBtn">Click</button>
+    <button id="resetBtn">Reset</button>
+    <button id="addBtn">Add</button>
+
+</div>
+
+<script>
+
+    let leftOpperand = {
+        box: d3.select('#lOpperandDivisonBox'),
+        width: Number(d3.select('#lOpperandDivisonBox').attr('width')),
+        height: Number(d3.select('#lOpperandDivisonBox').attr('height')),
+        xLoc: Number(d3.select('#lOpperandDivisonBox').attr('x')),
+        yLoc: Number(d3.select('#lOpperandDivisonBox').attr('y')),
+        colour: '#8a2df3'
+    };
+
+    let rightOpperand = {
+        box: d3.select('#rOpperandDivisonBox'),
+        width: Number(d3.select('#rOpperandDivisonBox').attr('width')),
+        height: Number(d3.select('#rOpperandDivisonBox').attr('height')),
+        xLoc: Number(d3.select('#rOpperandDivisonBox').attr('x')),
+        yLoc: Number(d3.select('#rOpperandDivisonBox').attr('y')),
+        colour: '#f91750'
+    };
+
+    let divideBox = function (xVal, box, lineNum) {
+        let i = xVal;
+        while(lineNum > 0){
+            addLine(i + box.xLoc, i + box.xLoc, 0 + box.yLoc, box.height + box.yLoc);
+            i += xVal;
+            lineNum --;
+        }
+    };
+
+    let fillNumerator = function (xVal, box) {
+        d3.select('#'+box.box.attr('id') + 'Filled')
+            .transition().delay(function (d, i) {
+            return i * 300;
+        }).duration(500)
+            .attr('width', xVal)
+            .style('fill', box.colour)
+            .each('end', function () {
+                d3.select('#'+box.box.attr('id') + 'Answer')
+                    .attr('width', xVal)
+                    .style('fill', box.colour);
+            });
+    };
+
+    let initBox = function (numerator, denominator, box) {
+        let sectionLen = box.width / denominator;
+        fillNumerator((numerator * sectionLen), box);
+        divideBox(sectionLen, box, denominator - 1);
+    };
+
+    let addLine = function (x1, x2, y1, y2, isDashed) {
+        dashed = '0,0';
+        if(isDashed)
+            dashed = '4,3';
+        d3.select('#mainCanvas').append('line')
+            .attr('class', 'divLine')
+            .attr('x1', x1)
+            .attr('x2', x2)
+            .attr('y1', y1)
+            .attr('y2', y2)
+            .style('stroke', 'black')
+            .style('stroke-width', 2)
+            .attr('stroke-dasharray', dashed);
+    };
+
+    let isValid = function (numerator, denominator) {
+      if(numerator < 0 || numerator > 12 ) {
+          return false;
+      }
+      if (denominator <= 0 || denominator > 12) {
+          return false;
+      }
+      return (numerator < denominator);
+    };
+
+    let resetBoxes = function () {
+        d3.selectAll('.filledNum').attr('width', 0);
+        d3.select('#lOpperandDivisonBoxAnswer').attr('y', leftOpperand.yLoc);
+        d3.select('#rOpperandDivisonBoxAnswer').attr('x', rightOpperand.xLoc).attr('y', rightOpperand.yLoc);
+        d3.selectAll('.divLine').remove();
+        d3.select('#answerBox').attr('width', 0).attr('height', 0);
+    };
+
+    let resetInputs = function () {
+        document.getElementById('lOppNumerator').value = '';
+        document.getElementById('lOppDenominator').value = '';
+        document.getElementById('rOppNumerator').value = '';
+        document.getElementById('rOppDenominator').value = '';
+    };
+
+    let addingAnimation = function () {
+        rightXValue = Number(d3.select('#lOpperandDivisonBoxFilled').attr('width'));
+        rightXValue += Number(d3.select('#lOpperandDivisonBoxFilled').attr('x'));
+        leftDivLines = document.getElementById('lOppNumerator').value;
+        rightDivLines = document.getElementById('rOppNumerator').value;
+
+        boxWidth = 400;
+        if(rightXValue + Number(d3.select('#rOpperandDivisonBoxFilled').attr('width')) - 20 > 400) {
+            boxWidth = 800;
+        }
+
+        d3.select('#answerBox')
+            .transition().delay(function (d, i) {
+            return i * 300;
+        }).duration(800)
+            .attr('width', boxWidth)
+            .attr('height', 100);
+
+        d3.select('#lOpperandDivisonBoxAnswer')
+            .style('outline', 'solid black 2px')
+            .transition().delay(function (d, i) {
+            return i * 300;
+        }).duration(1000)
+            .attr('y', 300)
+            .each('end', function () {
+                d3.select('#rOpperandDivisonBoxAnswer')
+                    .style('outline', 'solid black 2px')
+                    .transition().delay(function (d, i) {
+                    return i * 300;
+                }).duration(1000)
+                    .attr('y', 300)
+                    .attr('x', rightXValue)
+                    .each('end', function () {
+                        let distance = d3.select('#lOpperandDivisonBoxAnswer').attr('width') / leftDivLines;
+                        for(i = 0; i < leftDivLines; i++) {
+                            addLine(20 + (distance * i), 20 + (distance * i), 300, 400);
+                        }
+                        distance = d3.select('#rOpperandDivisonBoxAnswer').attr('width') / rightDivLines;
+                        for(i = 0; i < rightDivLines; i++) {
+                            addLine(rightXValue + (distance * i), rightXValue + (distance * i), 300, 400);
+                        }
+                    })
+            })
+
+    }
+
+    document.getElementById('myBtn').onclick = function () {
+        resetBoxes();
+        let leftNum = document.getElementById('lOppNumerator').value;
+        let leftDenom = document.getElementById('lOppDenominator').value;
+        let rightNum = document.getElementById('rOppNumerator').value;
+        let rightDenom = document.getElementById('rOppDenominator').value;
+        if(isValid(Number(leftNum), Number(leftDenom)) && isValid(Number(rightNum), Number(rightDenom))) {
+            initBox(Number(leftNum), Number(leftDenom), leftOpperand);
+            initBox(Number(rightNum), Number(rightDenom), rightOpperand);
+        } else {
+            alert('Make sure your factions are proper and the denominators less then or equal to 12');
+        }
+    };
+
+    document.getElementById('resetBtn').onclick = function () {
+        resetBoxes();
+        resetInputs();
+    };
+
+    document.getElementById('addBtn').onclick = function () {
+        addingAnimation();
+    };
+</script>
+</body>
+</html>
