@@ -23,6 +23,9 @@
             font: 25px serif;
             fill: black;
         }
+        .expandFractionText {
+            fill: red;
+        }
         hr {
             max-width: 40px;
             height: 3px;
@@ -68,17 +71,25 @@
         <rect height="100" width="0" x="20" y="160" class="filledNum" id="rOpperandDivisonBoxAnswer"></rect>
         <line x1="15" x2="425" y1="280" y2="280" stroke="black" stroke-width="3px"></line>
 
-        <foreignObject x="440" y="100" width="100" height="50" class="expandBtn" id="lOppExpandBtn"
+        <foreignObject x="440" y="100" width="150" height="50" class="expandBtn" id="lOppExpandBtn"
             requiredExtensions="http://www.w3.org/1999/xhtml" style="display: none">
             <body xmlns="http://www.w3.org/1999/xhtml">
-              <button>Expand</button>
+                <lable style="float: left">Expand</lable>
+                <div class="btns" style="float: left; margin-left: 5px">
+                    <button id="lOppExpandPlusBtn"><b>+</b></button>
+                    <button id="lOppExpandMinusBtn"><b>-</b></button>
+                </div>
             </body>
         </foreignObject>
 
-        <foreignObject x="440" y="240" width="100" height="50" class="expandBtn" id="rOppExpandBtn"
+        <foreignObject x="440" y="240" width="150" height="50" class="expandBtn" id="rOppExpandBtn"
             requiredExtensions="http://www.w3.org/1999/xhtml" style="display: none">
             <body xmlns="http://www.w3.org/1999/xhtml">
-              <button>Expand</button>
+                <lable style="float: left">Expand</lable>
+                <div class="btns" style="float: left; margin-left: 5px">
+                    <button id="rOppExpandPlusBtn"><b>+</b></button>
+                    <button id="rOppExpandMinusBtn"><b>-</b></button>
+                </div>
             </body>
         </foreignObject>
 
@@ -103,7 +114,14 @@
         height: Number(d3.select('#lOpperandDivisonBox').attr('height')),
         xLoc: Number(d3.select('#lOpperandDivisonBox').attr('x')),
         yLoc: Number(d3.select('#lOpperandDivisonBox').attr('y')),
-        colour: '#8a2df3'
+        numerator: Number(0),
+        denominator: Number(0),
+        colour: '#8a2df3',
+        multiplier: Number(1),
+        isDrawn: false,
+        // originalFractionText: 'lOriginalText',
+        // expandFractionText: 'lExpandText'
+
     };
 
     let rightOpperand = {
@@ -112,7 +130,14 @@
         height: Number(d3.select('#rOpperandDivisonBox').attr('height')),
         xLoc: Number(d3.select('#rOpperandDivisonBox').attr('x')),
         yLoc: Number(d3.select('#rOpperandDivisonBox').attr('y')),
-        colour: '#f91750'
+        numerator: Number(0),
+        denominator: Number(0),
+        colour: '#f91750',
+        multiplier: Number(1),
+        isDrawn: false,
+        // originalFractionText: 'rOriginalText',
+        // expandFractionText: 'rExpandText'
+
     };
 
     let divideBox = function (xVal, box, lineNum) {
@@ -142,12 +167,12 @@
         let sectionLen = box.width / denominator;
         fillNumerator((numerator * sectionLen), box);
         divideBox(sectionLen, box, denominator - 1);
-        drawFractionText(numerator, denominator, Number(box.width) + 60, Number(box.yLoc) + 30);
+        drawFractionText(numerator, denominator, Number(box.width) + 60, Number(box.yLoc) + 30, 'originalFraction');
     };
 
-    let drawFractionText = function(numerator, denominator, xPos, yPos) {
+    let drawFractionText = function(numerator, denominator, xPos, yPos, secondaryClass) {
         d3.select('#mainCanvas').append('text')
-            .attr('class', 'fractionText')
+            .attr('class', 'fractionText '+ secondaryClass)
             .text(numerator)
             .attr('x', function() {
                 if(numerator < 10) {
@@ -160,7 +185,7 @@
             .attr('y', yPos);
 
         d3.select('#mainCanvas').append('text')
-            .attr('class', 'fractionText')
+            .attr('class', 'fractionText '+ secondaryClass)
             .text(denominator)
             .attr('x', function() {
                 if(denominator < 10) {
@@ -173,7 +198,7 @@
             .attr('y', yPos + 30);
 
         d3.select('#mainCanvas').append('line')
-            .attr('class', 'textFractionLine')
+            .attr('class', 'textFractionLine ' + secondaryClass)
             .attr('x1', xPos)
             .attr('x2', xPos + 25)
             .attr('y1', yPos + 5)
@@ -273,15 +298,25 @@
 
     }
 
+    let addExpand = function(box, classText) {
+        if(!box.isDrawn) {
+            box.multiplier++
+            drawFractionText(box.multiplier, box.multiplier, Number(box.width) + 110, Number(box.yLoc) + 30, classText);
+            drawFractionText((Number(box.numerator) * Number(box.multiplier)), box.denominator * box.denominator, Number(box.width) + 170, Number(box.yLoc) + 30, classText);
+            console.log(box.numerator);
+            console.log(box.multiplier);
+        }
+    }
+
     document.getElementById('submitFraction').onclick = function () {
         resetBoxes();
-        let leftNum = document.getElementById('lOppNumerator').value;
-        let leftDenom = document.getElementById('lOppDenominator').value;
-        let rightNum = document.getElementById('rOppNumerator').value;
-        let rightDenom = document.getElementById('rOppDenominator').value;
-        if(isValid(Number(leftNum), Number(leftDenom)) && isValid(Number(rightNum), Number(rightDenom))) {
-            initBox(Number(leftNum), Number(leftDenom), leftOpperand);
-            initBox(Number(rightNum), Number(rightDenom), rightOpperand);
+        leftOpperand.numerator = document.getElementById('lOppNumerator').value;
+        leftOpperand.denominator = document.getElementById('lOppDenominator').value;
+        rightOpperand.numerator = document.getElementById('rOppNumerator').value;
+        rightOpperand.denominator = document.getElementById('rOppDenominator').value;
+        if(isValid(Number(leftOpperand.numerator), Number(leftOpperand.denominator)) && isValid(Number(rightOpperand.numerator), Number(rightOpperand.denominator))) {
+            initBox(Number(leftOpperand.numerator), Number(leftOpperand.denominator), leftOpperand);
+            initBox(Number(rightOpperand.numerator), Number(rightOpperand.denominator), rightOpperand);
         } else {
             alert('Make sure your factions are proper and the denominators less then or equal to 12');
         }
@@ -296,9 +331,10 @@
         addingAnimation();
     };
 
-    document.getElementById('lOppExpandBtn').onclock = function() {
+    document.getElementById('lOppExpandPlusBtn').onclick = function() {
+        addExpand(leftOpperand, 'expandFractionText');
     }
-    document.getElementById('lOppExpandBtn').onclock = function() {
+    document.getElementById('lOppExpandMinBtn').onclick = function() {
     }
 </script>
 </body>
