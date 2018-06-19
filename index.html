@@ -23,7 +23,10 @@
             font: 25px serif;
             fill: black;
         }
-        .expandFractionText {
+        .lOpperandDivisonBoxFractionText {
+            fill: red;
+        }
+        .rOpperandDivisonBoxFractionText {
             fill: red;
         }
         hr {
@@ -100,9 +103,9 @@
 </div>
 
 <div style="clear: left;">
-    <button id="submitFraction" class="buttons">Submit</button>
-    <button id="resetBtn" class="buttons">Reset</button>
-    <button id="addBtn" class="buttons">Add</button>
+    <button id="submitFraction" class="buttons" style="float: left">Submit</button>
+    <button id="resetBtn" class="buttons" style="float: left;">Reset</button>
+    <button id="addBtn" class="buttons" style="display: none; float: left">Add</button>
 
 </div>
 
@@ -117,11 +120,8 @@
         numerator: Number(0),
         denominator: Number(0),
         colour: '#8a2df3',
-        multiplier: Number(1),
+        multiplier: Number(2),
         isDrawn: false,
-        // originalFractionText: 'lOriginalText',
-        // expandFractionText: 'lExpandText'
-
     };
 
     let rightOpperand = {
@@ -133,17 +133,13 @@
         numerator: Number(0),
         denominator: Number(0),
         colour: '#f91750',
-        multiplier: Number(1),
+        multiplier: Number(2),
         isDrawn: false,
-        // originalFractionText: 'rOriginalText',
-        // expandFractionText: 'rExpandText'
-
     };
-
-    let divideBox = function (xVal, box, lineNum) {
+    let divideBox = function (xVal, box, lineNum, isDashed) {
         let i = xVal;
         while(lineNum > 0){
-            addLine(i + box.xLoc, i + box.xLoc, 0 + box.yLoc, box.height + box.yLoc);
+            addLine(i + box.xLoc, i + box.xLoc, 0 + box.yLoc, box.height + box.yLoc, isDashed, box);
             i += xVal;
             lineNum --;
         }
@@ -168,6 +164,7 @@
         fillNumerator((numerator * sectionLen), box);
         divideBox(sectionLen, box, denominator - 1);
         drawFractionText(numerator, denominator, Number(box.width) + 60, Number(box.yLoc) + 30, 'originalFraction');
+        d3.select('#addBtn').style('display', 'block');
     };
 
     let drawFractionText = function(numerator, denominator, xPos, yPos, secondaryClass) {
@@ -207,12 +204,15 @@
             .style('stroke-width', 2);
     }
 
-    let addLine = function (x1, x2, y1, y2, isDashed) {
-        dashed = '0,0';
-        if(isDashed)
+    let addLine = function (x1, x2, y1, y2, isDashed, box) {
+        let dashed = '0,0';
+        let name = '';
+        if(isDashed) {
             dashed = '4,3';
+            name = box.box.attr('id') + 'DashedDivLine';
+        }
         d3.select('#mainCanvas').append('line')
-            .attr('class', 'divLine')
+            .attr('class', 'divLine ' + name)
             .attr('x1', x1)
             .attr('x2', x2)
             .attr('y1', y1)
@@ -241,6 +241,10 @@
         d3.selectAll('.textFractionLine').remove();
         d3.selectAll('.fractionText').remove();
         d3.selectAll('.expandBtn').style('display', 'none');
+        d3.select('#addBtn').style('display', 'none');
+        leftOpperand.multiplier = 0;
+        rightOpperand.multiplier = 0;
+
     };
 
     let resetInputs = function () {
@@ -255,7 +259,6 @@
         rightXValue += Number(d3.select('#lOpperandDivisonBoxFilled').attr('x'));
         leftDivLines = document.getElementById('lOppNumerator').value;
         rightDivLines = document.getElementById('rOppNumerator').value;
-
         boxWidth = 400;
         if(rightXValue + Number(d3.select('#rOpperandDivisonBoxFilled').attr('width')) - 20 > 400) {
             boxWidth = 800;
@@ -299,13 +302,41 @@
     }
 
     let addExpand = function(box, classText) {
-        if(!box.isDrawn) {
+        let name = box.box.attr('id') + classText;
+        if(box.multiplier < 12) {
+            d3.selectAll('.' + name).remove();
+            d3.selectAll('.' + box.box.attr('id') + 'DashedDivLine').remove();
             box.multiplier++
-            drawFractionText(box.multiplier, box.multiplier, Number(box.width) + 110, Number(box.yLoc) + 30, classText);
-            drawFractionText((Number(box.numerator) * Number(box.multiplier)), box.denominator * box.denominator, Number(box.width) + 170, Number(box.yLoc) + 30, classText);
-            console.log(box.numerator);
-            console.log(box.multiplier);
+            drawExpand(box, name);
         }
+    }
+
+    let minusExpand = function(box, classText) {
+        let name = box.box.attr('id') + classText;
+        if(box.multiplier > 1) {
+            d3.selectAll('.' + name).remove();
+            d3.selectAll('.' + box.box.attr('id') + 'DashedDivLine').remove();
+            box.multiplier--;
+            drawExpand(box, name);
+        }
+    }
+
+    let drawExpand = function(box, classText) {
+        drawFractionText(box.multiplier, box.multiplier, Number(box.width) + 110, Number(box.yLoc) + 30, classText);
+        drawFractionText((Number(box.numerator) * Number(box.multiplier)), (Number(box.denominator) * Number(box.multiplier)), Number(box.width) + 170, Number(box.yLoc) + 30, classText);
+        divideBox(box.width / (Number(box.multiplier) * Number(box.denominator)), box, Number(box.denominator) * Number(box.multiplier) - 1, true);
+        d3.select('#mainCanvas').append('text')
+            .attr('class', 'fractionText ' + classText)
+            .text('X')
+            .attr('x', Number(box.width) + 91)
+            .attr('y', Number(box.yLoc) + 41)
+            .style('font', '20px sans-serif');
+
+        d3.select('#mainCanvas').append('text')
+            .attr('class', 'fractionText ' + classText)
+            .text('=')
+            .attr('x', Number(box.width) + 146)
+            .attr('y', Number(box.yLoc) + 41);
     }
 
     document.getElementById('submitFraction').onclick = function () {
@@ -332,10 +363,20 @@
     };
 
     document.getElementById('lOppExpandPlusBtn').onclick = function() {
-        addExpand(leftOpperand, 'expandFractionText');
-    }
-    document.getElementById('lOppExpandMinBtn').onclick = function() {
-    }
+        addExpand(leftOpperand, 'FractionText');
+    };
+
+    document.getElementById('lOppExpandMinusBtn').onclick = function() {
+        minusExpand(leftOpperand, 'FractionText');
+    };
+
+    document.getElementById('rOppExpandPlusBtn').onclick = function() {
+        addExpand(rightOpperand, 'FractionText');
+    };
+
+    document.getElementById('rOppExpandMinusBtn').onclick = function() {
+        minusExpand(rightOpperand, 'FractionText');
+    };
 </script>
 </body>
 </html>
