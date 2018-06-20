@@ -102,8 +102,8 @@
 
 </div>
 
-<div style="clear: left;">
-    <button id="submitFraction" class="buttons" style="float: left">Submit</button>
+<div style="clear: left; margin-left: 75px;">
+    <button id="submitFraction" class="buttons" style="float: left">Start</button>
     <button id="resetBtn" class="buttons" style="float: left;">Reset</button>
     <button id="addBtn" class="buttons" style="display: none; float: left">Add</button>
 
@@ -120,8 +120,14 @@
         numerator: Number(0),
         denominator: Number(0),
         colour: '#8a2df3',
-        multiplier: Number(2),
-        isDrawn: false,
+        multiplier: Number(1),
+        answer: {
+            box: d3.select('#lOpperandDivisonBoxAnswer'),
+            width: 120,
+            height: 100,
+            xLoc: 20,
+            yLoc: 300
+        }
     };
 
     let rightOpperand = {
@@ -133,8 +139,14 @@
         numerator: Number(0),
         denominator: Number(0),
         colour: '#f91750',
-        multiplier: Number(2),
-        isDrawn: false,
+        multiplier: Number(1),
+        answer: {
+            box: d3.select('#rOpperandDivisonBoxAnswer'),
+            width: 120,
+            height: 100,
+            xLoc: 20,
+            yLoc: 300
+        }
     };
     let divideBox = function (xVal, box, lineNum, isDashed) {
         let i = xVal;
@@ -207,9 +219,11 @@
     let addLine = function (x1, x2, y1, y2, isDashed, box) {
         let dashed = '0,0';
         let name = '';
+        let stroke = 2;
         if(isDashed) {
             dashed = '4,3';
             name = box.box.attr('id') + 'DashedDivLine';
+            stroke = 1
         }
         d3.select('#mainCanvas').append('line')
             .attr('class', 'divLine ' + name)
@@ -218,7 +232,7 @@
             .attr('y1', y1)
             .attr('y2', y2)
             .style('stroke', 'black')
-            .style('stroke-width', 2)
+            .style('stroke-width', stroke)
             .attr('stroke-dasharray', dashed);
     };
 
@@ -242,8 +256,8 @@
         d3.selectAll('.fractionText').remove();
         d3.selectAll('.expandBtn').style('display', 'none');
         d3.select('#addBtn').style('display', 'none');
-        leftOpperand.multiplier = 0;
-        rightOpperand.multiplier = 0;
+        leftOpperand.multiplier = 1;
+        rightOpperand.multiplier = 1;
 
     };
 
@@ -255,6 +269,8 @@
     };
 
     let addingAnimation = function () {
+        updateAnswerValues(leftOpperand.answer);
+        updateAnswerValues(rightOpperand.answer);
         rightXValue = Number(d3.select('#lOpperandDivisonBoxFilled').attr('width'));
         rightXValue += Number(d3.select('#lOpperandDivisonBoxFilled').attr('x'));
         leftDivLines = document.getElementById('lOppNumerator').value;
@@ -301,11 +317,21 @@
 
     }
 
+    let updateAnswerValues = function(box) {
+        let boxId = '#' + box.box.attr('id');
+        box.width = Number(d3.select(boxId).attr('width'));
+        box.height = Number(d3.select(boxId).attr('height'));
+        box.xLoc = Number(d3.select(boxId).attr('x'));
+        box.yLoc = Number(d3.select(boxId).attr('y'));
+    }
+
     let addExpand = function(box, classText) {
         let name = box.box.attr('id') + classText;
+        updateAnswerValues(box.answer);
         if(box.multiplier < 12) {
             d3.selectAll('.' + name).remove();
             d3.selectAll('.' + box.box.attr('id') + 'DashedDivLine').remove();
+            d3.selectAll('.' + box.answer.box.attr('id') + 'DashedDivLine').remove();
             box.multiplier++
             drawExpand(box, name);
         }
@@ -316,6 +342,7 @@
         if(box.multiplier > 1) {
             d3.selectAll('.' + name).remove();
             d3.selectAll('.' + box.box.attr('id') + 'DashedDivLine').remove();
+            d3.selectAll('.' + box.answer.box.attr('id') + 'DashedDivLine').remove();
             box.multiplier--;
             drawExpand(box, name);
         }
@@ -325,6 +352,7 @@
         drawFractionText(box.multiplier, box.multiplier, Number(box.width) + 110, Number(box.yLoc) + 30, classText);
         drawFractionText((Number(box.numerator) * Number(box.multiplier)), (Number(box.denominator) * Number(box.multiplier)), Number(box.width) + 170, Number(box.yLoc) + 30, classText);
         divideBox(box.width / (Number(box.multiplier) * Number(box.denominator)), box, Number(box.denominator) * Number(box.multiplier) - 1, true);
+        divideBox(box.width / (Number(box.multiplier) * Number(box.denominator)), box.answer, Number(box.numerator) * Number(box.multiplier) - 1, true);
         d3.select('#mainCanvas').append('text')
             .attr('class', 'fractionText ' + classText)
             .text('X')
