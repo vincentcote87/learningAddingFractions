@@ -11,11 +11,9 @@
             opacity: 1.0;
             z-index: -1;
         }
-
         .filledNum {
             z-index: 99;
         }
-
         .fractionInput {
             max-width: 30px;
         }
@@ -29,10 +27,16 @@
         .rOpperandDivisonBoxFractionText {
             fill: red;
         }
-        hr {
+        .fractionBar {
             max-width: 40px;
             height: 3px;
             background-color: #000000;
+        }
+        .buttons {
+          min-width: 40px;
+        }
+        h1, p {
+            font-family: Helvetica, Arial, Sans-Serif;
         }
         input {
             text-align: center;
@@ -40,13 +44,19 @@
     </style>
 </head>
 <body>
-<div style="margin: 50px;">
+<div class="instructionText">
+    <h1 id="stepHeader"><b>Step 1</b></h1>
+    <p id="stepText">Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Vestibulum tortor quam, feugiat vitae, ultricies eget, tempor sit amet, ante. Donec eu libero sit amet quam egestas semper. Aenean ultricies mi vitae est. Mauris placerat eleifend leo
+</p>
+</div>
+<hr>
+<div>
     <div style="float: left; margin: 40px 20px 20px 16px;">
         <div>
             <input type="text" class="fractionInput" id="lOppNumerator">
         </div>
         <div>
-            <hr align="left">
+            <hr align="left" class="fractionBar">
         </div>
         <div>
             <input type="text" class="fractionInput" id="lOppDenominator">
@@ -55,7 +65,7 @@
             <input type="text" class="fractionInput" id="rOppNumerator">
         </div>
         <div>
-            <hr align="left">
+            <hr align="left" class="fractionBar">
         </div>
         <div>
             <input type="text" class="fractionInput" id="rOppDenominator">
@@ -79,8 +89,8 @@
             <body xmlns="http://www.w3.org/1999/xhtml">
                 <lable style="float: left">Expand</lable>
                 <div class="btns" style="float: left; margin-left: 5px">
-                    <button id="lOppExpandPlusBtn"><b>+</b></button>
-                    <button id="lOppExpandMinusBtn"><b>-</b></button>
+                    <button id="lOppExpandPlusBtn" class="buttons" style="width: 40px"><b>+</b></button>
+                    <button id="lOppExpandMinusBtn" class="buttons" style="width: 40px"><b>-</b></button>
                 </div>
             </body>
         </foreignObject>
@@ -90,8 +100,8 @@
             <body xmlns="http://www.w3.org/1999/xhtml">
                 <lable style="float: left">Expand</lable>
                 <div class="btns" style="float: left; margin-left: 5px">
-                    <button id="rOppExpandPlusBtn"><b>+</b></button>
-                    <button id="rOppExpandMinusBtn"><b>-</b></button>
+                    <button id="rOppExpandPlusBtn" class="buttons" style="width: 40px"><b>+</b></button>
+                    <button id="rOppExpandMinusBtn" class="buttons" style="width: 40px"><b>-</b></button>
                 </div>
             </body>
         </foreignObject>
@@ -367,6 +377,11 @@
             .attr('y', Number(box.yLoc) + 41);
     }
 
+    let setInstruction = function(stepNum) {
+        d3.select('#stepHeader').text(stepNum.header);
+        d3.select('#stepText').text(stepNum.text);
+    }
+
     document.getElementById('submitFraction').onclick = function () {
         resetBoxes();
         leftOpperand.numerator = document.getElementById('lOppNumerator').value;
@@ -376,17 +391,20 @@
         if(isValid(Number(leftOpperand.numerator), Number(leftOpperand.denominator)) && isValid(Number(rightOpperand.numerator), Number(rightOpperand.denominator))) {
             initBox(Number(leftOpperand.numerator), Number(leftOpperand.denominator), leftOpperand);
             initBox(Number(rightOpperand.numerator), Number(rightOpperand.denominator), rightOpperand);
+            setInstruction(steps.step2);
         } else {
             alert('Make sure your factions are proper and the denominators less then or equal to 12');
         }
     };
 
     document.getElementById('resetBtn').onclick = function () {
+        setInstruction(steps.step1);
         resetBoxes();
         resetInputs();
     };
 
     document.getElementById('addBtn').onclick = function () {
+        setInstruction(steps.step3);
         addingAnimation();
     };
 
@@ -405,6 +423,21 @@
     document.getElementById('rOppExpandMinusBtn').onclick = function() {
         minusExpand(rightOpperand, 'FractionText');
     };
+
+    let steps = {
+        step1: {
+            header: 'Step 1',
+            text: 'Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Vestibulum tortor quam, feugiat vitae, ultricies eget, tempor sit amet, ante. Donec eu libero sit amet quam egestas semper. Aenean ultricies mi vitae est. Mauris placerat eleifend leo'
+        },
+        step2: {
+            header: 'Step 2',
+            text: 'Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.Vestibulum tortor quam, feugiat vitae, ultricies eget, tempor sit amet, ante. Donec eu libero sitamet quam egestas semper. Aenean ultricies mi vitae est. Mauris placerat eleifend leo. Quisque sit ametest et sapien ullamcorper pharetra. Vestibulum erat wisi, condimentum sed, commodo vitae, ornare sit amet, wisi.Aenean fermentum, elit eget tincidunt condimentum, eros ipsum rutrum orci,sagittis tempus lacus enim ac dui.Donec non enim in turpis pulvinar facilisis. Ut felis. Praesent dapibus, neque id cursus faucibus, tortor neque egestas augue, euvulputate magna eros eu erat. Aliquam erat volutpat. Nam dui mi, tincidunt quis, accumsan porttitor, facilisis luctus, metus'
+        },
+        step3: {
+            header: 'Step 3',
+            text: 'Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Vestibulum tortor quam, feugiat vitae, ultricies eget, tempor sit amet, ante. Donec eu libero sit amet quam egestas semper. Aenean ultricies mi vitae est. Mauris placerat eleifend leo. Quisque sit amet est et sapien ullamcorper pharetra. Vestibulum erat wisi, condimentum sed, <code>commodo vitae</code>, ornare sit amet, wisi. Aenean fermentum, elit eget tincidunt condimentum, eros ipsum rutrum orci, sagittis tempus lacus enim ac dui. in turpis pulvinar facilisis. Ut felis.'
+        }
+    }
 </script>
 </body>
 </html>
