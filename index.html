@@ -110,8 +110,14 @@
       <button id="resetBtn" class="buttons" style="clear: left; min-width:100px">Reset</button>
   </div>
 
-  <div class="answerArea">
-      <svg width="100" height="100" id="answerCanvas" style="float: left"></svg>
+  <div class="answerArea" id="answerAreaId" style="display: none;">
+      <svg width="120" height="100" id="answerCanvas" style="float: left; padding-right: 10px"></svg>
+        <div style="float: left">
+            <input type="text" class="fractionInput" id="answerNumerator" placeholder="1">
+            <hr align="left" class="fractionBar">
+            <input type="text" class="fractionInput" id="answerDenominator" placeholder="1">
+        </div>
+        <button id="checkAnswer" class="buttons" style="min-width:100px">Check Answer</button>
   </div>
 
 <script>
@@ -272,6 +278,8 @@
         document.getElementById('lOppDenominator').value = '';
         document.getElementById('rOppNumerator').value = '';
         document.getElementById('rOppDenominator').value = '';
+        d3.select('#answerAreaId').style('display', 'none');
+
     };
 
     let addingAnimation = function () {
@@ -335,6 +343,10 @@
                         ;
                     })
             });
+
+            if(isSameDenominator(Number(leftOpperand.denominator), Number(rightOpperand.denominator))) {
+              drawMatchingText();
+            }
     }
 
     let updateAnswerValues = function(box) {
@@ -355,6 +367,14 @@
             box.multiplier++
             drawExpand(box, name);
         }
+        let lh = Number(leftOpperand.denominator)*(Number(leftOpperand.multiplier));
+        let rh = Number(rightOpperand.denominator)*(Number(rightOpperand.multiplier));
+        if(isSameDenominator(lh, rh)) {
+          drawMatchingText();
+        }
+        else {
+          d3.selectAll('#matchText').remove();
+        }
     }
 
     let minusExpand = function(box, classText) {
@@ -366,6 +386,29 @@
             box.multiplier--;
             drawExpand(box, name);
         }
+        let lh = Number(leftOpperand.denominator)*(Number(leftOpperand.multiplier));
+        let rh = Number(rightOpperand.denominator)*(Number(rightOpperand.multiplier));
+        if(isSameDenominator(lh, rh)) {
+          drawMatchingText();
+        }
+        else {
+          d3.selectAll('#matchText').remove();
+        }
+    }
+
+    let isSameDenominator = function(lh, rh) {
+      if(lh === rh) {
+        return true;
+      }
+    }
+
+    let drawMatchingText = function() {
+      d3.select('#mainCanvas').append('text')
+        .attr('id', 'matchText')
+        .text('The denominators match!!')
+        .attr('x', 550)
+        .attr('y', 160)
+        .style('font','25px sans-serif');
     }
 
     let drawExpand = function(box, classText) {
@@ -404,11 +447,88 @@
     }
 
     let initAnswerArea = function() {
+        d3.select('#answerAreaId').style('display', 'block');
         d3.select('#answerCanvas').append('text')
             .text(leftOpperand.numerator = document.getElementById('lOppNumerator').value)
-            .attr('x', 20)
+            .attr('x', function() {
+              if(leftOpperand.numerator > 9) {
+                return 15;
+              }
+              else {
+                return 22;
+              }
+            })
             .attr('y', 30)
             .attr('class', 'fractionText');
+
+        d3.select('#answerCanvas').append('text')
+            .text(leftOpperand.denominator = document.getElementById('lOppDenominator').value)
+            .attr('x', function() {
+              if(leftOpperand.denominator > 9) {
+                return 15;
+              }
+              else {
+                return 22;
+              }
+            })
+            .attr('y', 60)
+            .attr('class', 'fractionText');
+
+        d3.select('#answerCanvas').append('line')
+            .attr('x1',15)
+            .attr('x2',40)
+            .attr('y1',36)
+            .attr('y2',36)
+            .style('stroke', 'black')
+            .style('stroke-width', 2)
+            .attr('class', 'fractionText');
+
+        d3.select("#answerCanvas").append('text')
+            .text('+')
+            .attr('x', 51)
+            .attr('y', 45)
+            .attr('class', 'fractionText');
+
+        d3.select('#answerCanvas').append('text')
+            .text(rightOpperand.numerator = document.getElementById('rOppNumerator').value)
+            .attr('x', function() {
+              if(rightOpperand.numerator > 9) {
+                return 75;
+              }
+              else {
+                return 82;
+              }
+            })
+            .attr('y', 30)
+            .attr('class', 'fractionText');
+
+        d3.select('#answerCanvas').append('text')
+            .text(rightOpperand.denominator = document.getElementById('rOppDenominator').value)
+            .attr('x', function() {
+              if(rightOpperand.denominator > 9) {
+                return 75;
+              }
+              else {
+                return 82;
+              }
+            })
+            .attr('y', 60)
+            .attr('class', 'fractionText');
+
+            d3.select('#answerCanvas').append('line')
+                .attr('x1',75)
+                .attr('x2',100)
+                .attr('y1',36)
+                .attr('y2',36)
+                .style('stroke', 'black')
+                .style('stroke-width', 2)
+                .attr('class', 'fractionText');
+
+            d3.select("#answerCanvas").append('text')
+                .text('=')
+                .attr('x', 110)
+                .attr('y', 45)
+                .attr('class', 'fractionText');
     }
 
     document.getElementById('submitFraction').onclick = function () {
