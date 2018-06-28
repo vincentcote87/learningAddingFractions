@@ -5,127 +5,114 @@
     <meta charset="UTF-8">
     <title>Fractions</title>
     <style>
-        .divisionBox {
-            outline: solid #000000 3px;
-            fill: #ffffff;
-            opacity: 1.0;
-            z-index: -1;
-        }
-        .filledNum {
-            z-index: 99;
-        }
-        .fractionInput {
-            max-width: 30px;
-        }
-        .fractionText {
-            font: 25px serif;
-            fill: black;
-        }
-        .lOpperandDivisonBoxFractionText {
-            fill: red;
-        }
-        .rOpperandDivisonBoxFractionText {
-            fill: red;
-        }
-        .fractionBar {
-            max-width: 40px;
-            height: 3px;
-            background-color: #000000;
-        }
-        .buttons {
-          min-width: 40px;
-        }
-        .mainButtons{
-            clear: left;
-            margin-left: 75px;
-        }
-        h1, p {
-            font-family: Helvetica, Arial, Sans-Serif;
-        }
-        input {
-            text-align: center;
-        }
+            .divisionBox {
+                outline: solid #000000 3px;
+                fill: #ffffff;
+                opacity: 1.0;
+                z-index: -1;
+            }
+            .filledNum {
+                z-index: 99;
+            }
+            .fractionInput {
+                max-width: 30px;
+            }
+            .fractionText {
+                font: 25px serif;
+                fill: black;
+            }
+            .lOpperandDivisonBoxFractionText {
+                fill: red;
+            }
+            .rOpperandDivisonBoxFractionText {
+                fill: red;
+            }
+            .fractionBar {
+                max-width: 40px;
+                height: 3px;
+                background-color: #000000;
+            }
+            .buttons {
+              min-width: 40px;
+            }
+            .mainButtons{
+                clear: left;
+                margin-left: 75px;
+            }
+            h1, p {
+                font-family: Helvetica, Arial, Sans-Serif;
+            }
+            input {
+                text-align: center;
+            }
     </style>
 </head>
-<body onload = "setInstruction(steps.step1)">
-<div class="instructionText" style="min-height:140px">
-    <h1 id="stepHeader"><b></b></h1>
-    <p id="stepText"></p>
-</div>
-<hr>
-<div>
-    <div style="float: left; margin: 40px 20px 20px 16px;">
-        <div>
-            <input type="text" class="fractionInput" id="lOppNumerator" placeholder="0">
-        </div>
-        <div>
-            <hr align="left" class="fractionBar">
-        </div>
-        <div>
-            <input type="text" class="fractionInput" id="lOppDenominator" placeholder="1">
-        </div>
-        <div style="margin-top: 80px">
-            <input type="text" class="fractionInput" id="rOppNumerator" placeholder="0">
-        </div>
-        <div>
-            <hr align="left" class="fractionBar">
-        </div>
-        <div>
-            <input type="text" class="fractionInput" id="rOppDenominator" placeholder="1">
-        </div>
-    </div>
+<body>
+  <div class="instructionText" style="min-height:140px">
+      <h1 id="stepHeader"><b>Step 1: Enter two proper fractions</b></h1>
+      <p id="stepText">To gain a better understanding of fraction addition we will visualize each steps. Below are two boxes representing the two fractions we want to add together. On the left of these boxes are small input fields to enter the fractions. Choose two fractions you wish to add together (eg. 3/7 and 5/12), make sure the fractions are proper (numerator must be less then the denominator) and with a denominator of 12 or less. Once the fractions have been inputted click on the start button.</p>
+  </div>
+  <hr>
+  <div>
+      <div style="float: left; margin: 25px 0px 0px 0px ">
+          <div>
+              <input type="text" class="fractionInput" id="lOppNumerator" placeholder="0">
+              <hr align="left" class="fractionBar">
+              <input type="text" class="fractionInput" id="lOppDenominator" placeholder="1">
+          </div>
+          <div style="margin-top: 50px">
+              <input type="text" class="fractionInput" id="rOppNumerator" placeholder="0">
+              <hr align="left" class="fractionBar">
+              <input type="text" class="fractionInput" id="rOppDenominator" placeholder="1">
+          </div>
+      </div>
 
-    <svg width="850" height="420" id="mainCanvas" style="float: left">
-      <rect height="100" width="400" x="20" y="20" class="divisionBox"></rect>
-      <rect height="0" width="0" x="20" y="300" class="divisionBox" id="answerBox"></rect>
-        <rect height="100" width="400" x="20" y="20" class="divisionBox" id="lOpperandDivisonBox"></rect>
-        <rect height="100" width="0" x="20" y="20" class="filledNum" id="lOpperandDivisonBoxFilled"></rect>
-        <rect height="100" width="0" x="20" y="20" class="filledNum" id="lOpperandDivisonBoxAnswer"></rect>
-        <text x="0" y="148" color="black" font-size="30">+</text>
-        <rect height="100" width="400" x="20" y="160" class="divisionBox" id="rOpperandDivisonBox"></rect>
-        <rect height="100" width="0" x="20" y="160" class="filledNum" id="rOpperandDivisonBoxFilled"></rect>
-        <rect height="100" width="0" x="20" y="160" class="filledNum" id="rOpperandDivisonBoxAnswer"></rect>
-        <line x1="15" x2="425" y1="280" y2="280" stroke="black" stroke-width="3px"></line>
+      <svg width="850" height="420" id="mainCanvas" style="float: left">
+        <rect height="100" width="400" x="20" y="20" class="divisionBox"></rect>
+        <rect height="0" width="0" x="20" y="300" class="divisionBox" id="answerBox"></rect>
+          <rect height="100" width="400" x="20" y="20" class="divisionBox" id="lOpperandDivisonBox"></rect>
+          <rect height="100" width="0" x="20" y="20" class="filledNum" id="lOpperandDivisonBoxFilled"></rect>
+          <rect height="100" width="0" x="20" y="20" class="filledNum" id="lOpperandDivisonBoxAnswer"></rect>
+          <text x="0" y="148" color="black" font-size="30">+</text>
+          <rect height="100" width="400" x="20" y="160" class="divisionBox" id="rOpperandDivisonBox"></rect>
+          <rect height="100" width="0" x="20" y="160" class="filledNum" id="rOpperandDivisonBoxFilled"></rect>
+          <rect height="100" width="0" x="20" y="160" class="filledNum" id="rOpperandDivisonBoxAnswer"></rect>
+          <line x1="15" x2="425" y1="280" y2="280" stroke="black" stroke-width="3px"></line>
 
-        <foreignObject x="440" y="100" width="150" height="50" class="expandBtn" id="lOppExpandBtn"
-            requiredExtensions="http://www.w3.org/1999/xhtml" style="display: none">
-            <body xmlns="http://www.w3.org/1999/xhtml">
-                <lable style="float: left">Expand</lable>
-                <div class="btns" style="float: left; margin-left: 5px">
-                    <button id="lOppExpandPlusBtn" class="buttons" style="width: 40px"><b>+</b></button>
-                    <button id="lOppExpandMinusBtn" class="buttons" style="width: 40px"><b>-</b></button>
-                </div>
-            </body>
-        </foreignObject>
+          <foreignObject x="440" y="100" width="150" height="50" class="expandBtn" id="lOppExpandBtn"
+              requiredExtensions="http://www.w3.org/1999/xhtml" style="display: none">
+              <body xmlns="http://www.w3.org/1999/xhtml">
+                  <lable style="float: left">Multiply</lable>
+                  <div class="btns" style="float: left; margin-left: 5px">
+                      <button id="lOppExpandPlusBtn" class="buttons" style="width: 40px"><b>+</b></button>
+                      <button id="lOppExpandMinusBtn" class="buttons" style="width: 40px"><b>-</b></button>
+                  </div>
+              </body>
+          </foreignObject>
+          <foreignObject x="440" y="240" width="150" height="50" class="expandBtn" id="rOppExpandBtn"
+              requiredExtensions="http://www.w3.org/1999/xhtml" style="display: none">
+              <body xmlns="http://www.w3.org/1999/xhtml">
+                  <lable style="float: left">Multiply</lable>
+                  <div class="btns" style="float: left; margin-left: 5px">
+                      <button id="rOppExpandPlusBtn" class="buttons" style="width: 40px"><b>+</b></button>
+                      <button id="rOppExpandMinusBtn" class="buttons" style="width: 40px"><b>-</b></button>
+                  </div>
+              </body>
+          </foreignObject>
+      </svg>
+  </div>
 
-        <foreignObject x="440" y="240" width="150" height="50" class="expandBtn" id="rOppExpandBtn"
-            requiredExtensions="http://www.w3.org/1999/xhtml" style="display: none">
-            <body xmlns="http://www.w3.org/1999/xhtml">
-                <lable style="float: left">Expand</lable>
-                <div class="btns" style="float: left; margin-left: 5px">
-                    <button id="rOppExpandPlusBtn" class="buttons" style="width: 40px"><b>+</b></button>
-                    <button id="rOppExpandMinusBtn" class="buttons" style="width: 40px"><b>-</b></button>
-                </div>
-            </body>
-        </foreignObject>
+  <div style="clear: left; margin-left: 75px;">
+      <button id="submitFraction" class="buttons" style="float: left; min-width:100px">Start</button>
+      <button id="addBtn" class="buttons" style="display: none; float: left; min-width:100px">Combine</button>
+  </div>
+  <div class="mainButtons">
+      <button id="resetBtn" class="buttons" style="clear: left; min-width:100px">Reset</button>
+  </div>
 
-
-    </svg>
-
-
-</div>
-
-<div style="clear: left; margin-left: 75px;">
-    <button id="submitFraction" class="buttons" style="float: left; min-width:100px">Start</button>
-    <button id="addBtn" class="buttons" style="display: none; float: left; min-width:100px">Combine</button>
-</div>
-<div class="mainButtons">
-    <button id="resetBtn" class="buttons" style="clear: left; min-width:100px">Reset</button>
-</div>
-
-<div class="answerArea">
-    <svg width="100" height="100" id="answerCanvas" style="float: left"></svg>
-</div>
+  <div class="answerArea">
+      <svg width="100" height="100" id="answerCanvas" style="float: left"></svg>
+  </div>
 
 <script>
 
@@ -295,8 +282,10 @@
         leftDivLines = document.getElementById('lOppNumerator').value;
         rightDivLines = document.getElementById('rOppNumerator').value;
         boxWidth = 400;
+        isOver1 = false;
         if(rightXValue + Number(d3.select('#rOpperandDivisonBoxFilled').attr('width')) - 20 > 400) {
             boxWidth = 800;
+            isOver1 = true;
         }
 
         d3.selectAll('.expandBtn').style('display', 'block');
@@ -306,7 +295,19 @@
             return i * 300;
         }).duration(800)
             .attr('width', boxWidth)
-            .attr('height', 100);
+            .attr('height', 100)
+            .each('end', function() {
+              if(boxWidth > 400) {
+                d3.select('#mainCanvas').append('line')
+                  .attr('class', 'divLine')
+                  .attr('x1', 420)
+                  .attr('x2',420)
+                  .attr('y1',300)
+                  .attr('y2',400)
+                  .style('stroke', 'black')
+                  .style('stroke-width', 3)
+                }
+            });
 
         d3.select('#lOpperandDivisonBoxAnswer')
             .style('outline', 'solid black 2px')
@@ -331,9 +332,9 @@
                         for(i = 0; i < rightDivLines; i++) {
                             addLine(rightXValue + (distance * i), rightXValue + (distance * i), 300, 400);
                         }
+                        ;
                     })
-            })
-
+            });
     }
 
     let updateAnswerValues = function(box) {
