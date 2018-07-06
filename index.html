@@ -130,7 +130,7 @@
 
 
   <div class="answerArea" id="answerAreaId" style="display: none;">
-    <svg width="120" height="100" id="answerCanvas" style="float: left; padding-right: 10px"></svg>
+    <svg width="130" height="100" id="answerCanvas" style="float: left; padding-right: 10px"></svg>
     <div>
       <input type="text" class="fractionInput form-control form-control-sm" id="answerNumerator" placeholder="0" style="margin-bottom: -10px">
       <hr align="left" class="fractionBar">
@@ -286,15 +286,9 @@
       d3.selectAll('.filledNum').attr('width', 0);
       d3.select('#lOpperandDivisonBoxAnswer').attr('y', leftOpperand.yLoc);
       d3.select('#rOpperandDivisonBoxAnswer').attr('x', rightOpperand.xLoc).attr('y', rightOpperand.yLoc);
-      // d3.selectAll('.divLine').remove();
       d3.selectAll('.resetRemove').remove();
       d3.selectAll('.resetDisplay').style('display', 'none');
       d3.select('#answerBox').attr('width', 0).attr('height', 0);
-      // d3.selectAll('.textFractionLine').remove();
-      // d3.selectAll('.fractionText').remove();
-      // d3.selectAll('.expandBtn').style('display', 'none');
-      // d3.select('#addBtn').style('display', 'none');
-      // d3.selectAll('.matchText').remove();
       leftOpperand.multiplier = 1;
       rightOpperand.multiplier = 1;
 
