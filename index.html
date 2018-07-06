@@ -1,592 +1,654 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <script src="https://d3js.org/d3.v3.min.js"></script>
-    <meta charset="UTF-8">
-    <title>Fractions</title>
-    <style>
-            .divisionBox {
-                outline: solid #000000 3px;
-                fill: #ffffff;
-                opacity: 1.0;
-                z-index: -1;
-            }
-            .filledNum {
-                z-index: 99;
-            }
-            .fractionInput {
-                max-width: 30px;
-            }
-            .fractionText {
-                font: 25px serif;
-                fill: black;
-            }
-            .lOpperandDivisonBoxFractionText {
-                fill: red;
-            }
-            .rOpperandDivisonBoxFractionText {
-                fill: red;
-            }
-            .fractionBar {
-                max-width: 40px;
-                height: 3px;
-                background-color: #000000;
-            }
-            .buttons {
-              min-width: 40px;
-            }
-            .mainButtons{
-                clear: left;
-                margin-left: 75px;
-            }
-            h1, p {
-                font-family: Helvetica, Arial, Sans-Serif;
-            }
-            input {
-                text-align: center;
-            }
-    </style>
+  <script src="https://d3js.org/d3.v3.min.js"></script>
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB" crossorigin="anonymous">
+  <meta charset="UTF-8">
+  <title>Fractions</title>
+  <style>
+    .divisionBox {
+      outline: solid #000000 3px;
+      fill: #ffffff;
+      opacity: 1.0;
+      z-index: -1;
+    }
+
+    .filledNum {
+      z-index: 99;
+    }
+
+    .fractionInput {
+      max-width: 40px;
+    }
+
+    .fractionText {
+      font: 25px serif;
+      fill: black;
+    }
+
+    .lOpperandDivisonBoxFractionText {
+      fill: red;
+    }
+
+    .rOpperandDivisonBoxFractionText {
+      fill: red;
+    }
+
+    .fractionBar {
+      max-width: 40px;
+      height: 3px;
+      background-color: #000000;
+    }
+
+    .buttons {
+      min-width: 40px;
+      width: 40px;
+      margin: 5px;
+    }
+
+    .mainButtons {
+      clear: left;
+      margin-left: 75px;
+    }
+
+    h1,
+    p {
+      font-family: Helvetica, Arial, Sans-Serif;
+    }
+
+    input {
+      text-align: center;
+    }
+  </style>
 </head>
+
 <body>
   <div class="instructionText" style="min-height:140px">
-      <h1 id="stepHeader"><b>Step 1: Enter two proper fractions</b></h1>
-      <p id="stepText">To gain a better understanding of fraction addition we will visualize each steps. Below are two boxes representing the two fractions we want to add together. On the left of these boxes are small input fields to enter the fractions. Choose two fractions you wish to add together (eg. 3/7 and 5/12), make sure the fractions are proper (numerator must be less then the denominator) and with a denominator of 12 or less. Once the fractions have been inputted click on the start button.</p>
+    <h1 id="stepHeader"><b>Step 1: Enter two proper fractions</b></h1>
+    <p id="stepText">To gain a better understanding of fraction addition we will visualize each steps. Below are two boxes representing the two fractions we want to add together. On the left of these boxes are small input fields to enter the fractions. Choose two fractions
+      you wish to add together (eg. 3/7 and 5/12), make sure the fractions are proper (numerator must be less then the denominator) and with a denominator of 12 or less. Once the fractions have been inputted click on the start button.</p>
   </div>
   <hr>
   <div>
-      <div style="float: left; margin: 25px 0px 0px 0px ">
-          <div>
-              <input type="text" class="fractionInput" id="lOppNumerator" placeholder="0">
-              <hr align="left" class="fractionBar">
-              <input type="text" class="fractionInput" id="lOppDenominator" placeholder="1">
-          </div>
-          <div style="margin-top: 50px">
-              <input type="text" class="fractionInput" id="rOppNumerator" placeholder="0">
-              <hr align="left" class="fractionBar">
-              <input type="text" class="fractionInput" id="rOppDenominator" placeholder="1">
-          </div>
+    <div style="float: left; margin: 25px 0px 0px 0px ">
+      <div>
+        <input type="text" class="fractionInput form-control form-control-sm" id="lOppNumerator" placeholder="0" style="margin-bottom: -10px">
+        <hr align="left" class="fractionBar">
+        <input type="text" class="fractionInput form-control form-control-sm" id="lOppDenominator" placeholder="1" style="margin-top: -10px">
       </div>
+      <div style="margin-top: 50px">
+        <input type="text" class="fractionInput form-control form-control-sm" id="rOppNumerator" placeholder="0" style="margin-bottom: -10px">
+        <hr align="left" class="fractionBar">
+        <input type="text" class="fractionInput form-control form-control-sm" id="rOppDenominator" placeholder="1" style="margin-top: -10px">
+      </div>
+    </div>
 
-      <svg width="850" height="420" id="mainCanvas" style="float: left">
-        <rect height="100" width="400" x="20" y="20" class="divisionBox"></rect>
-        <rect height="0" width="0" x="20" y="300" class="divisionBox" id="answerBox"></rect>
-          <rect height="100" width="400" x="20" y="20" class="divisionBox" id="lOpperandDivisonBox"></rect>
-          <rect height="100" width="0" x="20" y="20" class="filledNum" id="lOpperandDivisonBoxFilled"></rect>
-          <rect height="100" width="0" x="20" y="20" class="filledNum" id="lOpperandDivisonBoxAnswer"></rect>
-          <text x="0" y="148" color="black" font-size="30">+</text>
-          <rect height="100" width="400" x="20" y="160" class="divisionBox" id="rOpperandDivisonBox"></rect>
-          <rect height="100" width="0" x="20" y="160" class="filledNum" id="rOpperandDivisonBoxFilled"></rect>
-          <rect height="100" width="0" x="20" y="160" class="filledNum" id="rOpperandDivisonBoxAnswer"></rect>
-          <line x1="15" x2="425" y1="280" y2="280" stroke="black" stroke-width="3px"></line>
+    <svg width="850" height="420" id="mainCanvas" style="float: left">
+     <rect height="100" width="400" x="20" y="20" class="divisionBox"></rect>
+     <rect height="0" width="0" x="20" y="300" class="divisionBox" id="answerBox"></rect>
+     <rect height="100" width="400" x="20" y="20" class="divisionBox" id="lOpperandDivisonBox"></rect>
+     <rect height="100" width="0" x="20" y="20" class="filledNum" id="lOpperandDivisonBoxFilled"></rect>
+     <rect height="100" width="0" x="20" y="20" class="filledNum" id="lOpperandDivisonBoxAnswer"></rect>
+     <text x="0" y="148" color="black" font-size="30">+</text>
+     <rect height="100" width="400" x="20" y="160" class="divisionBox" id="rOpperandDivisonBox"></rect>
+     <rect height="100" width="0" x="20" y="160" class="filledNum" id="rOpperandDivisonBoxFilled"></rect>
+     <rect height="100" width="0" x="20" y="160" class="filledNum" id="rOpperandDivisonBoxAnswer"></rect>
+     <line x1="15" x2="425" y1="280" y2="280" stroke="black" stroke-width="3px"></line>
 
-          <foreignObject x="440" y="100" width="150" height="50" class="expandBtn" id="lOppExpandBtn"
-              requiredExtensions="http://www.w3.org/1999/xhtml" style="display: none">
-              <body xmlns="http://www.w3.org/1999/xhtml">
-                  <lable style="float: left">Multiply</lable>
-                  <div class="btns" style="float: left; margin-left: 5px">
-                      <button id="lOppExpandPlusBtn" class="buttons" style="width: 40px"><b>+</b></button>
-                      <button id="lOppExpandMinusBtn" class="buttons" style="width: 40px"><b>-</b></button>
-                  </div>
-              </body>
-          </foreignObject>
-          <foreignObject x="440" y="240" width="150" height="50" class="expandBtn" id="rOppExpandBtn"
-              requiredExtensions="http://www.w3.org/1999/xhtml" style="display: none">
-              <body xmlns="http://www.w3.org/1999/xhtml">
-                  <lable style="float: left">Multiply</lable>
-                  <div class="btns" style="float: left; margin-left: 5px">
-                      <button id="rOppExpandPlusBtn" class="buttons" style="width: 40px"><b>+</b></button>
-                      <button id="rOppExpandMinusBtn" class="buttons" style="width: 40px"><b>-</b></button>
-                  </div>
-              </body>
-          </foreignObject>
-      </svg>
+       <foreignObject x="440" y="100" width="150" height="50" class="expandBtn" id="lOppExpandBtn"
+           requiredExtensions="http://www.w3.org/1999/xhtml" style="display: none">
+           <body xmlns="http://www.w3.org/1999/xhtml">
+               <lable style="float: left; margin-top:10px;">Multiply</lable>
+               <div class="btns" style="float: left; margin: 5px 0 0 5px;">
+                   <button type="button" id="lOppExpandPlusBtn" class="btn btn-outline-primary btn-sm" style="width: 30px"><b>+</b></button>
+                   <button type="button" id="lOppExpandMinusBtn" class="btn btn-outline-primary btn-sm" style="width: 30px"><b>-</b></button>
+               </div>
+           </body>
+       </foreignObject>
+       <foreignObject x="440" y="240" width="150" height="50" class="expandBtn" id="rOppExpandBtn"
+           requiredExtensions="http://www.w3.org/1999/xhtml" style="display: none">
+           <body xmlns="http://www.w3.org/1999/xhtml">
+               <lable style="float: left; margin-top:10px;">Multiply</lable>
+               <div class="btns" style="float: left; margin: 5px 0 0 5px;">
+                   <button type="button" id="rOppExpandPlusBtn" class="btn btn-outline-primary btn-sm" style="width: 30px"><b>+</b></button>
+                   <button type="button" id="rOppExpandMinusBtn" class="btn btn-outline-primary btn-sm" style="width: 30px"><b>-</b></button>
+               </div>
+           </body>
+       </foreignObject>
+   </svg>
   </div>
 
   <div style="clear: left; margin-left: 75px;">
-      <button id="submitFraction" class="buttons" style="float: left; min-width:100px">Start</button>
-      <button id="addBtn" class="buttons" style="display: none; float: left; min-width:100px">Combine</button>
+    <button type="button" id="submitFraction" class="btn btn-primary buttons" style="float: left; min-width:100px">Start</button>
+    <button type="button" id="addBtn" class="btn btn-primary buttons" style="display: none; float: left; min-width:100px">Combine</button>
   </div>
   <div class="mainButtons">
-      <button id="resetBtn" class="buttons" style="clear: left; min-width:100px">Reset</button>
+    <button type="button" id="resetBtn" class="btn btn-primary buttons" style="clear: left; min-width:100px">Reset</button>
   </div>
+
+
 
   <div class="answerArea" id="answerAreaId" style="display: none;">
-      <svg width="120" height="100" id="answerCanvas" style="float: left; padding-right: 10px"></svg>
-        <div style="float: left">
-            <input type="text" class="fractionInput" id="answerNumerator" placeholder="1">
-            <hr align="left" class="fractionBar">
-            <input type="text" class="fractionInput" id="answerDenominator" placeholder="1">
-        </div>
-        <button id="checkAnswer" class="buttons" style="min-width:100px">Check Answer</button>
+    <svg width="120" height="100" id="answerCanvas" style="float: left; padding-right: 10px"></svg>
+    <div>
+      <input type="text" class="fractionInput form-control form-control-sm" id="answerNumerator" placeholder="0" style="margin-bottom: -10px">
+      <hr align="left" class="fractionBar">
+      <input type="text" class="fractionInput form-control form-control-sm" id="answerDenominator" placeholder="1" style="margin-top: -10px">
+    </div>
+  </div>
+  <div class="answerArea" style="display: none;">
+    <button id="checkAnswer" class="btn btn-primary">Check Answer</button>
   </div>
 
-<script>
-
+  <script>
     let leftOpperand = {
-        box: d3.select('#lOpperandDivisonBox'),
-        width: Number(d3.select('#lOpperandDivisonBox').attr('width')),
-        height: Number(d3.select('#lOpperandDivisonBox').attr('height')),
-        xLoc: Number(d3.select('#lOpperandDivisonBox').attr('x')),
-        yLoc: Number(d3.select('#lOpperandDivisonBox').attr('y')),
-        numerator: Number(0),
-        denominator: Number(0),
-        colour: '#8a2df3',
-        multiplier: Number(1),
-        answer: {
-            box: d3.select('#lOpperandDivisonBoxAnswer'),
-            width: 120,
-            height: 100,
-            xLoc: 20,
-            yLoc: 300
-        }
+      box: d3.select('#lOpperandDivisonBox'),
+      width: Number(d3.select('#lOpperandDivisonBox').attr('width')),
+      height: Number(d3.select('#lOpperandDivisonBox').attr('height')),
+      xLoc: Number(d3.select('#lOpperandDivisonBox').attr('x')),
+      yLoc: Number(d3.select('#lOpperandDivisonBox').attr('y')),
+      numerator: Number(0),
+      denominator: Number(0),
+      colour: '#8a2df3',
+      multiplier: Number(1),
+      answer: {
+        box: d3.select('#lOpperandDivisonBoxAnswer'),
+        width: 120,
+        height: 100,
+        xLoc: 20,
+        yLoc: 300
+      }
     };
 
     let rightOpperand = {
-        box: d3.select('#rOpperandDivisonBox'),
-        width: Number(d3.select('#rOpperandDivisonBox').attr('width')),
-        height: Number(d3.select('#rOpperandDivisonBox').attr('height')),
-        xLoc: Number(d3.select('#rOpperandDivisonBox').attr('x')),
-        yLoc: Number(d3.select('#rOpperandDivisonBox').attr('y')),
-        numerator: Number(0),
-        denominator: Number(0),
-        colour: '#f91750',
-        multiplier: Number(1),
-        answer: {
-            box: d3.select('#rOpperandDivisonBoxAnswer'),
-            width: 120,
-            height: 100,
-            xLoc: 20,
-            yLoc: 300
-        }
+      box: d3.select('#rOpperandDivisonBox'),
+      width: Number(d3.select('#rOpperandDivisonBox').attr('width')),
+      height: Number(d3.select('#rOpperandDivisonBox').attr('height')),
+      xLoc: Number(d3.select('#rOpperandDivisonBox').attr('x')),
+      yLoc: Number(d3.select('#rOpperandDivisonBox').attr('y')),
+      numerator: Number(0),
+      denominator: Number(0),
+      colour: '#f91750',
+      multiplier: Number(1),
+      answer: {
+        box: d3.select('#rOpperandDivisonBoxAnswer'),
+        width: 120,
+        height: 100,
+        xLoc: 20,
+        yLoc: 300
+      }
     };
-    let divideBox = function (xVal, box, lineNum, isDashed) {
-        let i = xVal;
-        while(lineNum > 0){
-            addLine(i + box.xLoc, i + box.xLoc, 0 + box.yLoc, box.height + box.yLoc, isDashed, box);
-            i += xVal;
-            lineNum --;
-        }
+    let divideBox = function(xVal, box, lineNum, isDashed) {
+      let i = xVal;
+      while (lineNum > 0) {
+        addLine(i + box.xLoc, i + box.xLoc, 0 + box.yLoc, box.height + box.yLoc, isDashed, box);
+        i += xVal;
+        lineNum--;
+      }
     };
 
-    let fillNumerator = function (xVal, box) {
-        d3.select('#'+box.box.attr('id') + 'Filled')
-            .transition().delay(function (d, i) {
-            return i * 300;
+    let fillNumerator = function(xVal, box) {
+      d3.select('#' + box.box.attr('id') + 'Filled')
+        .transition().delay(function(d, i) {
+          return i * 300;
         }).duration(500)
+        .attr('width', xVal)
+        .style('fill', box.colour)
+        .each('end', function() {
+          d3.select('#' + box.box.attr('id') + 'Answer')
             .attr('width', xVal)
-            .style('fill', box.colour)
-            .each('end', function () {
-                d3.select('#'+box.box.attr('id') + 'Answer')
-                    .attr('width', xVal)
-                    .style('fill', box.colour);
-            });
+            .style('fill', box.colour);
+        });
     };
 
-    let initBox = function (numerator, denominator, box) {
-        let sectionLen = box.width / denominator;
-        fillNumerator((numerator * sectionLen), box);
-        divideBox(sectionLen, box, denominator - 1);
-        drawFractionText(numerator, denominator, Number(box.width) + 60, Number(box.yLoc) + 30, 'originalFraction');
-        d3.select('#addBtn').style('display', 'block');
-        initAnswerArea();
+    let initBox = function(numerator, denominator, box) {
+      let sectionLen = box.width / denominator;
+      fillNumerator((numerator * sectionLen), box);
+      divideBox(sectionLen, box, denominator - 1);
+      drawFractionText(numerator, denominator, Number(box.width) + 60, Number(box.yLoc) + 30, 'originalFraction');
+      d3.select('#addBtn').style('display', 'block');
+      initAnswerArea();
     };
 
     let drawFractionText = function(numerator, denominator, xPos, yPos, secondaryClass) {
-        d3.select('#mainCanvas').append('text')
-            .attr('class', 'fractionText '+ secondaryClass)
-            .text(numerator)
-            .attr('x', function() {
-                if(numerator < 10) {
-                    return xPos + 7;
-                }
-                else {
-                    return xPos;
-                }
-            })
-            .attr('y', yPos);
+      d3.select('#mainCanvas').append('text')
+        .attr('class', 'fractionText ' + secondaryClass)
+        .text(numerator)
+        .attr('x', function() {
+          if (numerator < 10) {
+            return xPos + 7;
+          } else {
+            return xPos;
+          }
+        })
+        .attr('y', yPos);
 
-        d3.select('#mainCanvas').append('text')
-            .attr('class', 'fractionText '+ secondaryClass)
-            .text(denominator)
-            .attr('x', function() {
-                if(denominator < 10) {
-                    return xPos + 7;
-                }
-                else {
-                    return xPos;
-                }
-            })
-            .attr('y', yPos + 30);
+      d3.select('#mainCanvas').append('text')
+        .attr('class', 'fractionText ' + secondaryClass)
+        .text(denominator)
+        .attr('x', function() {
+          if (denominator < 10) {
+            return xPos + 7;
+          } else {
+            return xPos;
+          }
+        })
+        .attr('y', yPos + 30);
 
-        d3.select('#mainCanvas').append('line')
-            .attr('class', 'textFractionLine ' + secondaryClass)
-            .attr('x1', xPos)
-            .attr('x2', xPos + 25)
-            .attr('y1', yPos + 5)
-            .attr('y2', yPos + 5)
-            .style('stroke', 'black')
-            .style('stroke-width', 2);
+      d3.select('#mainCanvas').append('line')
+        .attr('class', 'textFractionLine ' + secondaryClass)
+        .attr('x1', xPos)
+        .attr('x2', xPos + 25)
+        .attr('y1', yPos + 5)
+        .attr('y2', yPos + 5)
+        .style('stroke', 'black')
+        .style('stroke-width', 2);
     }
 
-    let addLine = function (x1, x2, y1, y2, isDashed, box) {
-        let dashed = '0,0';
-        let name = '';
-        let stroke = 2;
-        if(isDashed) {
-            dashed = '4,3';
-            name = box.box.attr('id') + 'DashedDivLine';
-            stroke = 1
-        }
-        d3.select('#mainCanvas').append('line')
-            .attr('class', 'divLine ' + name)
-            .attr('x1', x1)
-            .attr('x2', x2)
-            .attr('y1', y1)
-            .attr('y2', y2)
-            .style('stroke', 'black')
-            .style('stroke-width', stroke)
-            .attr('stroke-dasharray', dashed);
+    let addLine = function(x1, x2, y1, y2, isDashed, box) {
+      let dashed = '0,0';
+      let name = '';
+      let stroke = 2;
+      if (isDashed) {
+        dashed = '4,3';
+        name = box.box.attr('id') + 'DashedDivLine';
+        stroke = 1
+      }
+      d3.select('#mainCanvas').append('line')
+        .attr('class', 'divLine ' + name)
+        .attr('x1', x1)
+        .attr('x2', x2)
+        .attr('y1', y1)
+        .attr('y2', y2)
+        .style('stroke', 'black')
+        .style('stroke-width', stroke)
+        .attr('stroke-dasharray', dashed);
     };
 
-    let isValid = function (numerator, denominator) {
-      if(numerator < 0 || numerator > 12 ) {
-          return false;
+    let isValid = function(numerator, denominator) {
+      if (numerator < 0 || numerator > 12) {
+        return false;
       }
       if (denominator <= 0 || denominator > 12) {
-          return false;
+        return false;
       }
       return (numerator < denominator);
     };
 
-    let resetBoxes = function () {
-        d3.selectAll('.filledNum').attr('width', 0);
-        d3.select('#lOpperandDivisonBoxAnswer').attr('y', leftOpperand.yLoc);
-        d3.select('#rOpperandDivisonBoxAnswer').attr('x', rightOpperand.xLoc).attr('y', rightOpperand.yLoc);
-        d3.selectAll('.divLine').remove();
-        d3.select('#answerBox').attr('width', 0).attr('height', 0);
-        d3.selectAll('.textFractionLine').remove();
-        d3.selectAll('.fractionText').remove();
-        d3.selectAll('.expandBtn').style('display', 'none');
-        d3.select('#addBtn').style('display', 'none');
-        leftOpperand.multiplier = 1;
-        rightOpperand.multiplier = 1;
+    let resetBoxes = function() {
+      d3.selectAll('.filledNum').attr('width', 0);
+      d3.select('#lOpperandDivisonBoxAnswer').attr('y', leftOpperand.yLoc);
+      d3.select('#rOpperandDivisonBoxAnswer').attr('x', rightOpperand.xLoc).attr('y', rightOpperand.yLoc);
+      d3.selectAll('.divLine').remove();
+      d3.select('#answerBox').attr('width', 0).attr('height', 0);
+      d3.selectAll('.textFractionLine').remove();
+      d3.selectAll('.fractionText').remove();
+      d3.selectAll('.expandBtn').style('display', 'none');
+      d3.select('#addBtn').style('display', 'none');
+      d3.selectAll('.matchText').remove();
+      leftOpperand.multiplier = 1;
+      rightOpperand.multiplier = 1;
 
     };
 
-    let resetInputs = function () {
-        document.getElementById('lOppNumerator').value = '';
-        document.getElementById('lOppDenominator').value = '';
-        document.getElementById('rOppNumerator').value = '';
-        document.getElementById('rOppDenominator').value = '';
-        d3.select('#answerAreaId').style('display', 'none');
+    let resetInputs = function() {
+      document.getElementById('lOppNumerator').value = '';
+      document.getElementById('lOppDenominator').value = '';
+      document.getElementById('rOppNumerator').value = '';
+      document.getElementById('rOppDenominator').value = '';
+      d3.selectAll('.answerArea').style('display', 'none');
 
     };
 
-    let addingAnimation = function () {
-        updateAnswerValues(leftOpperand.answer);
-        updateAnswerValues(rightOpperand.answer);
-        rightXValue = Number(d3.select('#lOpperandDivisonBoxFilled').attr('width'));
-        rightXValue += Number(d3.select('#lOpperandDivisonBoxFilled').attr('x'));
-        leftDivLines = document.getElementById('lOppNumerator').value;
-        rightDivLines = document.getElementById('rOppNumerator').value;
-        boxWidth = 400;
-        isOver1 = false;
-        if(rightXValue + Number(d3.select('#rOpperandDivisonBoxFilled').attr('width')) - 20 > 400) {
-            boxWidth = 800;
-            isOver1 = true;
-        }
+    let addingAnimation = function() {
+      updateAnswerValues(leftOpperand.answer);
+      updateAnswerValues(rightOpperand.answer);
+      rightXValue = Number(d3.select('#lOpperandDivisonBoxFilled').attr('width'));
+      rightXValue += Number(d3.select('#lOpperandDivisonBoxFilled').attr('x'));
+      leftDivLines = document.getElementById('lOppNumerator').value;
+      rightDivLines = document.getElementById('rOppNumerator').value;
+      boxWidth = 400;
+      isOver1 = false;
+      if (rightXValue + Number(d3.select('#rOpperandDivisonBoxFilled').attr('width')) - 20 > 400) {
+        boxWidth = 800;
+        isOver1 = true;
+      }
 
-        d3.selectAll('.expandBtn').style('display', 'block');
+      d3.selectAll('.expandBtn').style('display', 'block');
 
-        d3.select('#answerBox')
-            .transition().delay(function (d, i) {
-            return i * 300;
+      d3.select('#answerBox')
+        .transition().delay(function(d, i) {
+          return i * 300;
         }).duration(800)
-            .attr('width', boxWidth)
-            .attr('height', 100)
-            .each('end', function() {
-              if(boxWidth > 400) {
-                d3.select('#mainCanvas').append('line')
-                  .attr('class', 'divLine')
-                  .attr('x1', 420)
-                  .attr('x2',420)
-                  .attr('y1',300)
-                  .attr('y2',400)
-                  .style('stroke', 'black')
-                  .style('stroke-width', 3)
-                }
-            });
+        .attr('width', boxWidth)
+        .attr('height', 100)
+        .each('end', function() {
+          if (boxWidth > 400) {
+            d3.select('#mainCanvas').append('line')
+              .attr('class', 'divLine')
+              .attr('x1', 420)
+              .attr('x2', 420)
+              .attr('y1', 300)
+              .attr('y2', 400)
+              .style('stroke', 'black')
+              .style('stroke-width', 3)
+          }
+        });
 
-        d3.select('#lOpperandDivisonBoxAnswer')
-            .style('outline', 'solid black 2px')
-            .transition().delay(function (d, i) {
-            return i * 300;
+      d3.select('#lOpperandDivisonBoxAnswer')
+        .style('outline', 'solid black 2px')
+        .transition().delay(function(d, i) {
+          return i * 300;
         }).duration(1000)
+        .attr('y', 300)
+        .each('end', function() {
+          d3.select('#rOpperandDivisonBoxAnswer')
+            .style('outline', 'solid black 2px')
+            .transition().delay(function(d, i) {
+              return i * 300;
+            }).duration(1000)
             .attr('y', 300)
-            .each('end', function () {
-                d3.select('#rOpperandDivisonBoxAnswer')
-                    .style('outline', 'solid black 2px')
-                    .transition().delay(function (d, i) {
-                    return i * 300;
-                }).duration(1000)
-                    .attr('y', 300)
-                    .attr('x', rightXValue)
-                    .each('end', function () {
-                        let distance = d3.select('#lOpperandDivisonBoxAnswer').attr('width') / leftDivLines;
-                        for(i = 0; i < leftDivLines; i++) {
-                            addLine(20 + (distance * i), 20 + (distance * i), 300, 400);
-                        }
-                        distance = d3.select('#rOpperandDivisonBoxAnswer').attr('width') / rightDivLines;
-                        for(i = 0; i < rightDivLines; i++) {
-                            addLine(rightXValue + (distance * i), rightXValue + (distance * i), 300, 400);
-                        }
-                        ;
-                    })
-            });
+            .attr('x', rightXValue)
+            .each('end', function() {
+              let distance = d3.select('#lOpperandDivisonBoxAnswer').attr('width') / leftDivLines;
+              for (i = 0; i < leftDivLines; i++) {
+                addLine(20 + (distance * i), 20 + (distance * i), 300, 400);
+              }
+              distance = d3.select('#rOpperandDivisonBoxAnswer').attr('width') / rightDivLines;
+              for (i = 0; i < rightDivLines; i++) {
+                addLine(rightXValue + (distance * i), rightXValue + (distance * i), 300, 400);
+              };
+            })
+        });
 
-            if(isSameDenominator(Number(leftOpperand.denominator), Number(rightOpperand.denominator))) {
-              drawMatchingText();
-            }
+      if (isSameDenominator(Number(leftOpperand.denominator), Number(rightOpperand.denominator))) {
+        drawMatchingText();
+      }
     }
 
     let updateAnswerValues = function(box) {
-        let boxId = '#' + box.box.attr('id');
-        box.width = Number(d3.select(boxId).attr('width'));
-        box.height = Number(d3.select(boxId).attr('height'));
-        box.xLoc = Number(d3.select(boxId).attr('x'));
-        box.yLoc = Number(d3.select(boxId).attr('y'));
+      let boxId = '#' + box.box.attr('id');
+      box.width = Number(d3.select(boxId).attr('width'));
+      box.height = Number(d3.select(boxId).attr('height'));
+      box.xLoc = Number(d3.select(boxId).attr('x'));
+      box.yLoc = Number(d3.select(boxId).attr('y'));
     }
 
     let addExpand = function(box, classText) {
-        let name = box.box.attr('id') + classText;
-        updateAnswerValues(box.answer);
-        if(box.multiplier < 12) {
-            d3.selectAll('.' + name).remove();
-            d3.selectAll('.' + box.box.attr('id') + 'DashedDivLine').remove();
-            d3.selectAll('.' + box.answer.box.attr('id') + 'DashedDivLine').remove();
-            box.multiplier++
-            drawExpand(box, name);
-        }
-        let lh = Number(leftOpperand.denominator)*(Number(leftOpperand.multiplier));
-        let rh = Number(rightOpperand.denominator)*(Number(rightOpperand.multiplier));
-        if(isSameDenominator(lh, rh)) {
-          drawMatchingText();
-        }
-        else {
-          d3.selectAll('#matchText').remove();
-        }
+      let name = box.box.attr('id') + classText;
+      updateAnswerValues(box.answer);
+      if (box.multiplier < 12) {
+        d3.selectAll('.' + name).remove();
+        d3.selectAll('.' + box.box.attr('id') + 'DashedDivLine').remove();
+        d3.selectAll('.' + box.answer.box.attr('id') + 'DashedDivLine').remove();
+        box.multiplier++
+          drawExpand(box, name);
+      }
+      let lh = Number(leftOpperand.denominator) * (Number(leftOpperand.multiplier));
+      let rh = Number(rightOpperand.denominator) * (Number(rightOpperand.multiplier));
+      if (isSameDenominator(lh, rh)) {
+        drawMatchingText();
+      } else {
+        d3.selectAll('.matchText').remove();
+      }
     }
 
     let minusExpand = function(box, classText) {
-        let name = box.box.attr('id') + classText;
-        if(box.multiplier > 1) {
-            d3.selectAll('.' + name).remove();
-            d3.selectAll('.' + box.box.attr('id') + 'DashedDivLine').remove();
-            d3.selectAll('.' + box.answer.box.attr('id') + 'DashedDivLine').remove();
-            box.multiplier--;
-            drawExpand(box, name);
-        }
-        let lh = Number(leftOpperand.denominator)*(Number(leftOpperand.multiplier));
-        let rh = Number(rightOpperand.denominator)*(Number(rightOpperand.multiplier));
-        if(isSameDenominator(lh, rh)) {
-          drawMatchingText();
-        }
-        else {
-          d3.selectAll('#matchText').remove();
-        }
+      let name = box.box.attr('id') + classText;
+      if (box.multiplier > 1) {
+        d3.selectAll('.' + name).remove();
+        d3.selectAll('.' + box.box.attr('id') + 'DashedDivLine').remove();
+        d3.selectAll('.' + box.answer.box.attr('id') + 'DashedDivLine').remove();
+        box.multiplier--;
+        drawExpand(box, name);
+      }
+      let lh = Number(leftOpperand.denominator) * (Number(leftOpperand.multiplier));
+      let rh = Number(rightOpperand.denominator) * (Number(rightOpperand.multiplier));
+      if (isSameDenominator(lh, rh)) {
+        drawMatchingText();
+      } else {
+        d3.selectAll('.matchText').remove();
+      }
     }
 
     let isSameDenominator = function(lh, rh) {
-      if(lh === rh) {
+      if (lh === rh) {
         return true;
       }
     }
 
     let drawMatchingText = function() {
       d3.select('#mainCanvas').append('text')
-        .attr('id', 'matchText')
-        .text('The denominators match!!')
-        .attr('x', 550)
-        .attr('y', 160)
-        .style('font','25px sans-serif');
+        .attr('class', 'matchText')
+        .html('&#9989;')
+        .attr('x', 620)
+        .attr('y', 57)
+        .attr('width', 100)
+        .style('font', '20px sans-serif');
+
+      d3.select('#mainCanvas').append('text')
+        .attr('class', 'matchText')
+        .html('&#9989;')
+        .attr('x', 620)
+        .attr('y', 202)
+        .attr('width', 100)
+        .style('font', '20px sans-serif');
     }
 
     let drawExpand = function(box, classText) {
-        drawFractionText(box.multiplier, box.multiplier, Number(box.width) + 110, Number(box.yLoc) + 30, classText);
-        drawFractionText((Number(box.numerator) * Number(box.multiplier)), (Number(box.denominator) * Number(box.multiplier)), Number(box.width) + 170, Number(box.yLoc) + 30, classText);
-        divideBox(box.width / (Number(box.multiplier) * Number(box.denominator)), box, Number(box.denominator) * Number(box.multiplier) - 1, true);
-        divideBox(box.width / (Number(box.multiplier) * Number(box.denominator)), box.answer, Number(box.numerator) * Number(box.multiplier) - 1, true);
-        d3.select('#mainCanvas').append('text')
-            .attr('class', 'fractionText ' + classText)
-            .text('X')
-            .attr('x', Number(box.width) + 91)
-            .attr('y', Number(box.yLoc) + 41)
-            .style('font', '20px sans-serif');
+      drawFractionText(box.multiplier, box.multiplier, Number(box.width) + 110, Number(box.yLoc) + 30, classText);
+      drawFractionText((Number(box.numerator) * Number(box.multiplier)), (Number(box.denominator) * Number(box.multiplier)), Number(box.width) + 170, Number(box.yLoc) + 30, classText);
+      divideBox(box.width / (Number(box.multiplier) * Number(box.denominator)), box, Number(box.denominator) * Number(box.multiplier) - 1, true);
+      divideBox(box.width / (Number(box.multiplier) * Number(box.denominator)), box.answer, Number(box.numerator) * Number(box.multiplier) - 1, true);
+      d3.select('#mainCanvas').append('text')
+        .attr('class', 'fractionText ' + classText)
+        .text('X')
+        .attr('x', Number(box.width) + 91)
+        .attr('y', Number(box.yLoc) + 41)
+        .style('font', '20px sans-serif');
 
-        d3.select('#mainCanvas').append('text')
-            .attr('class', 'fractionText ' + classText)
-            .text('=')
-            .attr('x', Number(box.width) + 146)
-            .attr('y', Number(box.yLoc) + 41);
+      d3.select('#mainCanvas').append('text')
+        .attr('class', 'fractionText ' + classText)
+        .text('=')
+        .attr('x', Number(box.width) + 146)
+        .attr('y', Number(box.yLoc) + 41);
     }
 
     let setInstruction = function(stepNum) {
-        initText();
-        d3.select('#stepHeader').text(stepNum.header);
-        d3.select('#stepText').text(stepNum.text);
+      initText();
+      d3.select('#stepHeader').text(stepNum.header);
+      d3.select('#stepText').text(stepNum.text);
     }
 
     let initText = function() {
-        steps.step1.text = 'To gain a better understanding of fraction addition we will visualize each steps. Below are two boxes representing the two fractions we want to add together. On the left of these boxes are small input fields to enter the fractions. Choose two fractions you wish to add together (eg. 3/7 and 5/12), make sure the fractions are proper (numerator must be less then the denominator) and with a denominator of 12 or less. Once the fractions have been inputted click on the start button.';
+      steps.step1.text =
+        'To gain a better understanding of fraction addition we will visualize each steps. Below are two boxes representing the two fractions we want to add together. On the left of these boxes are small input fields to enter the fractions. Choose two fractions you wish to add together (eg. 3/7 and 5/12), make sure the fractions are proper (numerator must be less then the denominator) and with a denominator of 12 or less. Once the fractions have been inputted click on the start button.';
 
-        steps.step2.text = 'Great! You chose to add ' + document.getElementById('lOppNumerator').value + "/" + document.getElementById('lOppDenominator').value + " with " +
-        document.getElementById('rOppNumerator').value + "/" + document.getElementById('rOppDenominator').value + ', fantastic choice!! Now we can see the boxes below have been separated in smaller sections, if we count these sections we will see that the total equals the denominator of that fraction (for example the top fraction has been divided into ' + document.getElementById('lOppDenominator').value + ' sections). The sections that have been filled in show the numerator of the fraction. So if we count the filled in sections over the total number of section we get our fraction. We can think of the boxes as that value of 1, so in the case of the top box we split up 1 into ' + document.getElementById('lOppDenominator').value + ' equal parts. The next step is to combine these fractions to begin the addition.';
+      steps.step2.text = 'Great! You chose to add ' + document.getElementById('lOppNumerator').value + "/" + document.getElementById('lOppDenominator').value + " with " +
+        document.getElementById('rOppNumerator').value + "/" + document.getElementById('rOppDenominator').value +
+        ', fantastic choice!! Now we can see the boxes below have been separated in smaller sections, if we count these sections we will see that the total equals the denominator of that fraction (for example the top fraction has been divided into ' +
+        document.getElementById('lOppDenominator').value +
+        ' sections). The sections that have been filled in show the numerator of the fraction. So if we count the filled in sections over the total number of section we get our fraction. We can think of the boxes as that value of 1, so in the case of the top box we split up 1 into ' +
+        document.getElementById('lOppDenominator').value + ' equal parts. The next step is to combine these fractions to begin the addition.';
 
-        steps.step3.text = 'You have now combined the two fractions, the next step is the crucial part of the addition. In order to add these two fraction we must first find the lowest common denominator between the fractions. To do this we start by checking if the fractions have the same value for the denominator. If they do not, we must manipulate the fractions to make the denominators match.' +
+      steps.step3.text =
+        'You have now combined the two fractions, the next step is the crucial part of the addition. In order to add these two fraction we must first find the lowest common denominator between the fractions. To do this we start by checking if the fractions have the same value for the denominator. If they do not, we must manipulate the fractions to make the denominators match.' +
         'Next to each fraction below there is now a + and a – sign, play around with these until you can match both fraction’s denominators. As you expand these fractions you will see the boxes get re-divided to match their new denominator. Note that to keep the fractions equal their original values we must multiply both numerator and denominator by the same constant. When you find a matching denominator for both fractions you can count how many filled in sections exists in the combined box, this count becomes the added fraction’s numerator. Once you think you have found the lowest common denominator scroll below to check your answer. (Note that adding two improper fractions can often result in an improper fraction, this is totally ok)';
     }
 
     let initAnswerArea = function() {
-        d3.select('#answerAreaId').style('display', 'block');
-        d3.select('#answerCanvas').append('text')
-            .text(leftOpperand.numerator = document.getElementById('lOppNumerator').value)
-            .attr('x', function() {
-              if(leftOpperand.numerator > 9) {
-                return 15;
-              }
-              else {
-                return 22;
-              }
-            })
-            .attr('y', 30)
-            .attr('class', 'fractionText');
+      d3.selectAll('.answerArea').style('display', 'block');
+      d3.select('#answerCanvas').append('text')
+        .text(leftOpperand.numerator = document.getElementById('lOppNumerator').value)
+        .attr('x', function() {
+          if (leftOpperand.numerator > 9) {
+            return 15;
+          } else {
+            return 22;
+          }
+        })
+        .attr('y', 30)
+        .attr('class', 'fractionText');
 
-        d3.select('#answerCanvas').append('text')
-            .text(leftOpperand.denominator = document.getElementById('lOppDenominator').value)
-            .attr('x', function() {
-              if(leftOpperand.denominator > 9) {
-                return 15;
-              }
-              else {
-                return 22;
-              }
-            })
-            .attr('y', 60)
-            .attr('class', 'fractionText');
+      d3.select('#answerCanvas').append('text')
+        .text(leftOpperand.denominator = document.getElementById('lOppDenominator').value)
+        .attr('x', function() {
+          if (leftOpperand.denominator > 9) {
+            return 15;
+          } else {
+            return 22;
+          }
+        })
+        .attr('y', 60)
+        .attr('class', 'fractionText');
 
-        d3.select('#answerCanvas').append('line')
-            .attr('x1',15)
-            .attr('x2',40)
-            .attr('y1',36)
-            .attr('y2',36)
-            .style('stroke', 'black')
-            .style('stroke-width', 2)
-            .attr('class', 'fractionText');
+      d3.select('#answerCanvas').append('line')
+        .attr('x1', 15)
+        .attr('x2', 40)
+        .attr('y1', 36)
+        .attr('y2', 36)
+        .style('stroke', 'black')
+        .style('stroke-width', 2)
+        .attr('class', 'fractionText');
 
-        d3.select("#answerCanvas").append('text')
-            .text('+')
-            .attr('x', 51)
-            .attr('y', 45)
-            .attr('class', 'fractionText');
+      d3.select("#answerCanvas").append('text')
+        .text('+')
+        .attr('x', 51)
+        .attr('y', 45)
+        .attr('class', 'fractionText');
 
-        d3.select('#answerCanvas').append('text')
-            .text(rightOpperand.numerator = document.getElementById('rOppNumerator').value)
-            .attr('x', function() {
-              if(rightOpperand.numerator > 9) {
-                return 75;
-              }
-              else {
-                return 82;
-              }
-            })
-            .attr('y', 30)
-            .attr('class', 'fractionText');
+      d3.select('#answerCanvas').append('text')
+        .text(rightOpperand.numerator = document.getElementById('rOppNumerator').value)
+        .attr('x', function() {
+          if (rightOpperand.numerator > 9) {
+            return 75;
+          } else {
+            return 82;
+          }
+        })
+        .attr('y', 30)
+        .attr('class', 'fractionText');
 
-        d3.select('#answerCanvas').append('text')
-            .text(rightOpperand.denominator = document.getElementById('rOppDenominator').value)
-            .attr('x', function() {
-              if(rightOpperand.denominator > 9) {
-                return 75;
-              }
-              else {
-                return 82;
-              }
-            })
-            .attr('y', 60)
-            .attr('class', 'fractionText');
+      d3.select('#answerCanvas').append('text')
+        .text(rightOpperand.denominator = document.getElementById('rOppDenominator').value)
+        .attr('x', function() {
+          if (rightOpperand.denominator > 9) {
+            return 75;
+          } else {
+            return 82;
+          }
+        })
+        .attr('y', 60)
+        .attr('class', 'fractionText');
 
-            d3.select('#answerCanvas').append('line')
-                .attr('x1',75)
-                .attr('x2',100)
-                .attr('y1',36)
-                .attr('y2',36)
-                .style('stroke', 'black')
-                .style('stroke-width', 2)
-                .attr('class', 'fractionText');
+      d3.select('#answerCanvas').append('line')
+        .attr('x1', 75)
+        .attr('x2', 100)
+        .attr('y1', 36)
+        .attr('y2', 36)
+        .style('stroke', 'black')
+        .style('stroke-width', 2)
+        .attr('class', 'fractionText');
 
-            d3.select("#answerCanvas").append('text')
-                .text('=')
-                .attr('x', 110)
-                .attr('y', 45)
-                .attr('class', 'fractionText');
-    }
+      d3.select("#answerCanvas").append('text')
+        .text('=')
+        .attr('x', 110)
+        .attr('y', 45)
+        .attr('class', 'fractionText');
+    };
 
-    document.getElementById('submitFraction').onclick = function () {
-        resetBoxes();
-        leftOpperand.numerator = document.getElementById('lOppNumerator').value;
-        leftOpperand.denominator = document.getElementById('lOppDenominator').value;
-        rightOpperand.numerator = document.getElementById('rOppNumerator').value;
-        rightOpperand.denominator = document.getElementById('rOppDenominator').value;
-        if(isValid(Number(leftOpperand.numerator), Number(leftOpperand.denominator)) && isValid(Number(rightOpperand.numerator), Number(rightOpperand.denominator))) {
-            initBox(Number(leftOpperand.numerator), Number(leftOpperand.denominator), leftOpperand);
-            initBox(Number(rightOpperand.numerator), Number(rightOpperand.denominator), rightOpperand);
-            setInstruction(steps.step2);
-        } else {
-            alert('Make sure your factions are proper and the denominators less then or equal to 12');
+    let reduce = function(fraction) {
+      let count = fraction.denominator;
+      for(var i = count; i > 1; i--) {
+        if(fraction.numerator % i === 0 && fraction.denominator % i === 0) {
+          fraction.numerator /= i;
+          fraction.denominator /= i;
         }
+      }
+      return fraction;
     };
 
-    document.getElementById('resetBtn').onclick = function () {
-        setInstruction(steps.step1);
-        resetBoxes();
-        resetInputs();
+    let checkAnser = function(userAnswer, answer) {
+      if(userAnswer.numerator === answer.numerator && userAnswer.denominator === answer.denominator) {
+        console.log("Correct!");
+      }
+      //Fix bug for case when the numerator is reduced but not the denominaotor or vice versa
+      else if(userAnswer.numerator % answer.numerator === 0 && userAnswer.denominator % answer.denominator === 0) {
+        console.log('Correct but can be reduced!');
+      }
+      else {
+        console.log("try again...");
+      }
     };
 
-    document.getElementById('addBtn').onclick = function () {
-        setInstruction(steps.step3);
-        addingAnimation();
+    document.getElementById('submitFraction').onclick = function() {
+      resetBoxes();
+      leftOpperand.numerator = document.getElementById('lOppNumerator').value;
+      leftOpperand.denominator = document.getElementById('lOppDenominator').value;
+      rightOpperand.numerator = document.getElementById('rOppNumerator').value;
+      rightOpperand.denominator = document.getElementById('rOppDenominator').value;
+      if (isValid(Number(leftOpperand.numerator), Number(leftOpperand.denominator)) && isValid(Number(rightOpperand.numerator), Number(rightOpperand.denominator))) {
+        initBox(Number(leftOpperand.numerator), Number(leftOpperand.denominator), leftOpperand);
+        initBox(Number(rightOpperand.numerator), Number(rightOpperand.denominator), rightOpperand);
+        setInstruction(steps.step2);
+      } else {
+        alert('Make sure your factions are proper and the denominators less then or equal to 12');
+      }
+    };
+
+    document.getElementById('resetBtn').onclick = function() {
+      setInstruction(steps.step1);
+      resetBoxes();
+      resetInputs();
+    };
+
+    document.getElementById('addBtn').onclick = function() {
+      setInstruction(steps.step3);
+      addingAnimation();
     };
 
     document.getElementById('lOppExpandPlusBtn').onclick = function() {
-        addExpand(leftOpperand, 'FractionText');
+      addExpand(leftOpperand, 'FractionText');
     };
 
     document.getElementById('lOppExpandMinusBtn').onclick = function() {
-        minusExpand(leftOpperand, 'FractionText');
+      minusExpand(leftOpperand, 'FractionText');
     };
 
     document.getElementById('rOppExpandPlusBtn').onclick = function() {
-        addExpand(rightOpperand, 'FractionText');
+      addExpand(rightOpperand, 'FractionText');
     };
 
     document.getElementById('rOppExpandMinusBtn').onclick = function() {
-        minusExpand(rightOpperand, 'FractionText');
+      minusExpand(rightOpperand, 'FractionText');
+    };
+
+    document.getElementById('checkAnswer').onclick = function() {
+      let answer = {numerator: (Number(leftOpperand.numerator) * Number(rightOpperand.denominator)) + (Number(rightOpperand.numerator) * Number(leftOpperand.denominator)),
+                    denominator: Number(leftOpperand.denominator) * Number(rightOpperand.denominator)};
+      let userAnswer = {numerator: Number(document.getElementById('answerNumerator').value), denominator: Number(document.getElementById('answerDenominator').value)};
+      answer = reduce(answer);
+      if(userAnswer.numerator > 0 && userAnswer.denominator > 0) {
+        checkAnser(userAnswer, answer);
+      }
     };
 
     let steps = {
-        step1: {
-            header: 'Step 1: Enter two proper fractions',
-            text: ''
-        },
-        step2: {
-            header: 'Step 2: Combine the fractions',
-            text: ''
-        },
-        step3: {
-            header: 'Step 3: Find common denominator',
-            text: ''
-        }
+      step1: {
+        header: 'Step 1: Enter two proper fractions',
+        text: ''
+      },
+      step2: {
+        header: 'Step 2: Combine the fractions',
+        text: ''
+      },
+      step3: {
+        header: 'Step 3: Find common denominator',
+        text: ''
+      }
     }
-</script>
+  </script>
 </body>
+
 </html>
