@@ -96,7 +96,7 @@
      <rect height="100" width="0" x="20" y="160" class="filledNum" id="rOpperandDivisonBoxAnswer"></rect>
      <line x1="15" x2="425" y1="280" y2="280" stroke="black" stroke-width="3px"></line>
 
-       <foreignObject x="440" y="100" width="150" height="50" class="expandBtn" id="lOppExpandBtn"
+       <foreignObject x="440" y="100" width="150" height="50" class="expandBtn resetDisplay" id="lOppExpandBtn"
            requiredExtensions="http://www.w3.org/1999/xhtml" style="display: none">
            <body xmlns="http://www.w3.org/1999/xhtml">
                <lable style="float: left; margin-top:10px;">Multiply</lable>
@@ -106,7 +106,7 @@
                </div>
            </body>
        </foreignObject>
-       <foreignObject x="440" y="240" width="150" height="50" class="expandBtn" id="rOppExpandBtn"
+       <foreignObject x="440" y="240" width="150" height="50" class="expandBtn resetDisplay" id="rOppExpandBtn"
            requiredExtensions="http://www.w3.org/1999/xhtml" style="display: none">
            <body xmlns="http://www.w3.org/1999/xhtml">
                <lable style="float: left; margin-top:10px;">Multiply</lable>
@@ -121,7 +121,7 @@
 
   <div style="clear: left; margin-left: 75px;">
     <button type="button" id="submitFraction" class="btn btn-primary buttons" style="float: left; min-width:100px">Start</button>
-    <button type="button" id="addBtn" class="btn btn-primary buttons" style="display: none; float: left; min-width:100px">Combine</button>
+    <button type="button" id="addBtn" class="btn btn-primary buttons resetDisplay" style="display: none; float: left; min-width:100px">Combine</button>
   </div>
   <div class="mainButtons">
     <button type="button" id="resetBtn" class="btn btn-primary buttons" style="clear: left; min-width:100px">Reset</button>
@@ -139,6 +139,12 @@
   </div>
   <div class="answerArea" style="display: none;">
     <button id="checkAnswer" class="btn btn-primary">Check Answer</button>
+  </div>
+
+  <div>
+    <h5 id="correct" class="answerStatusText resetDisplay" style="display: none">Correct!</h5>
+    <h5 id="needRounding" class="answerStatusText resetDisplay" style="display: none">Correct but can be reduced.</h5>
+    <h5 id="incorrect" class="answerStatusText resetDisplay" style="display: none">Not quite, try again.</h5>
   </div>
 
   <script>
@@ -213,7 +219,7 @@
 
     let drawFractionText = function(numerator, denominator, xPos, yPos, secondaryClass) {
       d3.select('#mainCanvas').append('text')
-        .attr('class', 'fractionText ' + secondaryClass)
+        .attr('class', 'fractionText resetRemove ' + secondaryClass)
         .text(numerator)
         .attr('x', function() {
           if (numerator < 10) {
@@ -225,7 +231,7 @@
         .attr('y', yPos);
 
       d3.select('#mainCanvas').append('text')
-        .attr('class', 'fractionText ' + secondaryClass)
+        .attr('class', 'fractionText resetRemove ' + secondaryClass)
         .text(denominator)
         .attr('x', function() {
           if (denominator < 10) {
@@ -237,7 +243,7 @@
         .attr('y', yPos + 30);
 
       d3.select('#mainCanvas').append('line')
-        .attr('class', 'textFractionLine ' + secondaryClass)
+        .attr('class', 'textFractionLine ' + secondaryClass + ' resetRemove')
         .attr('x1', xPos)
         .attr('x2', xPos + 25)
         .attr('y1', yPos + 5)
@@ -256,7 +262,7 @@
         stroke = 1
       }
       d3.select('#mainCanvas').append('line')
-        .attr('class', 'divLine ' + name)
+        .attr('class', 'divLine ' + name + ' resetRemove')
         .attr('x1', x1)
         .attr('x2', x2)
         .attr('y1', y1)
@@ -280,13 +286,15 @@
       d3.selectAll('.filledNum').attr('width', 0);
       d3.select('#lOpperandDivisonBoxAnswer').attr('y', leftOpperand.yLoc);
       d3.select('#rOpperandDivisonBoxAnswer').attr('x', rightOpperand.xLoc).attr('y', rightOpperand.yLoc);
-      d3.selectAll('.divLine').remove();
+      // d3.selectAll('.divLine').remove();
+      d3.selectAll('.resetRemove').remove();
+      d3.selectAll('.resetDisplay').style('display', 'none');
       d3.select('#answerBox').attr('width', 0).attr('height', 0);
-      d3.selectAll('.textFractionLine').remove();
-      d3.selectAll('.fractionText').remove();
-      d3.selectAll('.expandBtn').style('display', 'none');
-      d3.select('#addBtn').style('display', 'none');
-      d3.selectAll('.matchText').remove();
+      // d3.selectAll('.textFractionLine').remove();
+      // d3.selectAll('.fractionText').remove();
+      // d3.selectAll('.expandBtn').style('display', 'none');
+      // d3.select('#addBtn').style('display', 'none');
+      // d3.selectAll('.matchText').remove();
       leftOpperand.multiplier = 1;
       rightOpperand.multiplier = 1;
 
@@ -297,6 +305,8 @@
       document.getElementById('lOppDenominator').value = '';
       document.getElementById('rOppNumerator').value = '';
       document.getElementById('rOppDenominator').value = '';
+      document.getElementById('answerNumerator').value = '';
+      document.getElementById('answerDenominator').value = '';
       d3.selectAll('.answerArea').style('display', 'none');
 
     };
@@ -326,7 +336,7 @@
         .each('end', function() {
           if (boxWidth > 400) {
             d3.select('#mainCanvas').append('line')
-              .attr('class', 'divLine')
+              .attr('class', 'divLine resetRemove')
               .attr('x1', 420)
               .attr('x2', 420)
               .attr('y1', 300)
@@ -420,7 +430,7 @@
 
     let drawMatchingText = function() {
       d3.select('#mainCanvas').append('text')
-        .attr('class', 'matchText')
+        .attr('class', 'matchText resetRemove')
         .html('&#9989;')
         .attr('x', 620)
         .attr('y', 57)
@@ -428,7 +438,7 @@
         .style('font', '20px sans-serif');
 
       d3.select('#mainCanvas').append('text')
-        .attr('class', 'matchText')
+        .attr('class', 'matchText resetRemove')
         .html('&#9989;')
         .attr('x', 620)
         .attr('y', 202)
@@ -442,14 +452,14 @@
       divideBox(box.width / (Number(box.multiplier) * Number(box.denominator)), box, Number(box.denominator) * Number(box.multiplier) - 1, true);
       divideBox(box.width / (Number(box.multiplier) * Number(box.denominator)), box.answer, Number(box.numerator) * Number(box.multiplier) - 1, true);
       d3.select('#mainCanvas').append('text')
-        .attr('class', 'fractionText ' + classText)
+        .attr('class', 'fractionText resetRemove ' + classText)
         .text('X')
         .attr('x', Number(box.width) + 91)
         .attr('y', Number(box.yLoc) + 41)
         .style('font', '20px sans-serif');
 
       d3.select('#mainCanvas').append('text')
-        .attr('class', 'fractionText ' + classText)
+        .attr('class', 'fractionText resetRemove ' + classText)
         .text('=')
         .attr('x', Number(box.width) + 146)
         .attr('y', Number(box.yLoc) + 41);
@@ -489,7 +499,7 @@
           }
         })
         .attr('y', 30)
-        .attr('class', 'fractionText');
+        .attr('class', 'fractionText resetRemove');
 
       d3.select('#answerCanvas').append('text')
         .text(leftOpperand.denominator = document.getElementById('lOppDenominator').value)
@@ -501,7 +511,7 @@
           }
         })
         .attr('y', 60)
-        .attr('class', 'fractionText');
+        .attr('class', 'fractionText resetRemove');
 
       d3.select('#answerCanvas').append('line')
         .attr('x1', 15)
@@ -510,13 +520,13 @@
         .attr('y2', 36)
         .style('stroke', 'black')
         .style('stroke-width', 2)
-        .attr('class', 'fractionText');
+        .attr('class', 'fractionText resetRemove');
 
       d3.select("#answerCanvas").append('text')
         .text('+')
         .attr('x', 51)
         .attr('y', 45)
-        .attr('class', 'fractionText');
+        .attr('class', 'fractionText resetRemove');
 
       d3.select('#answerCanvas').append('text')
         .text(rightOpperand.numerator = document.getElementById('rOppNumerator').value)
@@ -528,7 +538,7 @@
           }
         })
         .attr('y', 30)
-        .attr('class', 'fractionText');
+        .attr('class', 'fractionText resetRemove');
 
       d3.select('#answerCanvas').append('text')
         .text(rightOpperand.denominator = document.getElementById('rOppDenominator').value)
@@ -540,7 +550,7 @@
           }
         })
         .attr('y', 60)
-        .attr('class', 'fractionText');
+        .attr('class', 'fractionText resetRemove');
 
       d3.select('#answerCanvas').append('line')
         .attr('x1', 75)
@@ -549,36 +559,41 @@
         .attr('y2', 36)
         .style('stroke', 'black')
         .style('stroke-width', 2)
-        .attr('class', 'fractionText');
+        .attr('class', 'fractionText resetRemove');
 
       d3.select("#answerCanvas").append('text')
         .text('=')
         .attr('x', 110)
         .attr('y', 45)
-        .attr('class', 'fractionText');
+        .attr('class', 'fractionText resetRemove');
     };
 
     let reduce = function(fraction) {
       let count = fraction.denominator;
+      let myFraction = fraction;
       for(var i = count; i > 1; i--) {
-        if(fraction.numerator % i === 0 && fraction.denominator % i === 0) {
-          fraction.numerator /= i;
-          fraction.denominator /= i;
+        if(myFraction.numerator % i === 0 && myFraction.denominator % i === 0) {
+          myFraction.numerator /= i;
+          myFraction.denominator /= i;
         }
       }
-      return fraction;
+      return myFraction;
     };
 
     let checkAnser = function(userAnswer, answer) {
-      if(userAnswer.numerator === answer.numerator && userAnswer.denominator === answer.denominator) {
-        console.log("Correct!");
-      }
-      //Fix bug for case when the numerator is reduced but not the denominaotor or vice versaer
-      else if(userAnswer.numerator % answer.numerator === 0 && userAnswer.denominator % answer.denominator === 0) {
-        console.log('Correct but can be reduced!');
+      d3.selectAll('.answerStatusText').style('display', 'none');
+      if(userAnswer.numerator / userAnswer.denominator === answer.numerator / answer.denominator) {
+        let tmp = {numerator: userAnswer.numerator, denominator: userAnswer.denominator};
+        tmp = reduce(tmp);
+        if(tmp.numerator === userAnswer.numerator && tmp.denominator === userAnswer.denominator) {
+          d3.select('#correct').style('display', 'block')
+        }
+        else{
+          d3.select('#needRounding').style('display', 'block');
+        }
       }
       else {
-        console.log("try again...");
+        d3.select('#incorrect').style('display', 'block');
       }
     };
 
